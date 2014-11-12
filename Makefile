@@ -1,33 +1,43 @@
 CXX= cl/EHsc
 CXXFLAGS=
-
+SOURCE= src/Fibonacci.cpp
+EXECUTABLE= Fibonacci.exe
+EXE_TEST= src/test.cpp
+DELETE= -del
+OBJECT= Fibonacci.obj
+RUNORDER=
 
 .PHONY all:
-all: clean build test
+all: build run
 
 .PHONY build:
-build: Fibonacci.cpp
-	$(CXX) $(CXXFLAGS) Fibonacci.cpp
+build: $(EXECUTABLE)
+
+$(EXECUTABLE): $(SOURCE)
+	$(CXX) $(CXXFLAGS) $(SOURCE)
  
-.PHONY test:
-test: testclean testbuild #tests
+#.PHONY test:
+#test: testclean testbuild #tests
+
+.PHONY run:
+run: 
+	$(RUNORDER) $(EXECUTABLE) 
+
+#.PHONY testbuild:
+#testbuild: 
+#	$(CXX) $(CXXFLAGS) $(EXE_TEST)
 
 
-.PHONY testbuild:
-testbuild: test.cpp
-	$(CXX) $(CXXFLAGS) test.cpp
-
-
-#.PHONY tests: test.cpp
+#.PHONY test: test.cpp
 #	./test.cpp
 
-.PHONY: testclean
-testclean:
-	 -del test.obj test.exe
+#.PHONY: testclean
+#testclean: 
+#	$(DELETE) test.obj test.exe
 
 
 .PHONY clean:
-clean:
-	-del Fibonacci.obj Fibonacci.exe
+clean: 
+	$(DELETE) $(OBJECT) $(EXECUTABLE)
 
 

@@ -1,32 +1,33 @@
-#CC:=vcexpress -g 
+CXX= cl/EHsc
+CXXFLAGS=
 
 
-#.PHONY: all:
-#	all: build
+.PHONY all:
+all: clean build test
+
+.PHONY build:
+build: Fibonacci.cpp
+	$(CXX) $(CXXFLAGS) Fibonacci.cpp
  
-#.PHONY: build: 
-#	build:
-
-#.PHONY tests:
-#	tests: testfile
-
-#.PHONY clean:
-#	rm Fibonacci Fibonacci.o
-
-Fibonacci.exe :Fibonacci/Fibonacci.cpp
-	Fibonacci/Fibonacci.cpp -c 
+.PHONY test:
+test: testclean testbuild #tests
 
 
-Fibonacci: Fibonacci.o
-	Fibonacci.o -o Fibonacci
+.PHONY testbuild:
+testbuild: test.cpp
+	$(CXX) $(CXXFLAGS) test.cpp
 
 
+#.PHONY tests: test.cpp
+#	./test.cpp
 
+.PHONY: testclean
+testclean:
+	 -del test.obj test.exe
+
+
+.PHONY clean:
 clean:
-	rm Fibonacci.o Fibonacci
+	-del Fibonacci.obj Fibonacci.exe
 
-
-
-run: Fibonacci
-	./Fibonacci
 

@@ -116,31 +116,31 @@ unsigned long Fibonacci6(int n){  //Simple LookupTable for Fibonaccinumbers with
 
 //    auto stop = chrono::high_resolution_clock::now();    
 //    auto elapsed = stop - start;
-//    auto us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();  //
+//    auto us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();  
 //	return us;
 //}
 
-__int64 MeasureCycles ( unsigned int low, unsigned int high )   //function that measures the current CPU-cycles
+__int64 MeasureCycles ( unsigned int loword, unsigned int hiword )  //function that measures the current CPU-cycles
 {
 		_asm
 		{
 			_emit 0x0f	// insert rtdsc opcode
 			_emit 0x31
-			mov high , edx
-			mov low , eax
+			mov hiword , edx
+			mov loword , eax
 		}		
-	return ( (__int64) high << 32 ) + low;
+	return ( (__int64) hiword << 32 ) + loword;
 }
 
 int main(){
 	unsigned int high = 0;
 	unsigned int low = 0; 
-	double CycleStart = GetCPUCount ( low, high );
+	double CycleStart = MeasureCycles ( low, high );
  
 	Fibonacci1(5);
  
-	double CycleEnd = GetCPUCount ( low, high );
-	cout << CycleStart - CycleEnd;
+	double CycleEnd = MeasureCycles ( low, high );
+	cout << CycleEnd - CycleStart;
 	int j;
 	cin >> j;
 	return 0;

@@ -127,7 +127,6 @@ double MeasureTime(int n, int i){  //Measures the time of a Fibonacci-function i
 
 	QueryPerformanceCounter(&end);
     
-	double Hz = freq.QuadPart;			//Hertz of this PC
 	double elapsed = (end.QuadPart - start.QuadPart) * 1000000000 / freq.QuadPart;		//Operations between end and start, divided with the actual Hertz-number of the PC, to get speed. The 10^9 is for the correct unit
 	
 	return elapsed;
@@ -189,7 +188,39 @@ void OutputTime(int j, int finish){ //creates a chart for exercise04 for the tim
 		n++;
 	}
 }
-int main(){
+
+
+void OutputCycle(int j, int finish){ //creates a chart for exercise04 for the cycles. Fibonacci(j) is measured till finish
+	printf("%5s %10s %10s %10s %10s %20s\n", "n", "min", "max", "mean", "sd", "measurements");
+	int n = 0;
+	double x[6];
+	int i;
+	double min, max;
+	while (n<=finish){
+		for (i=0; i<=5; i++){
+			x[i]=MeasureCyclesFib(n,j);
+		}
 	
+		max = x[0];
+		for(int i = 0; i<=5; i++)
+		{
+		     if(x[i] > max) max = x[i];
+		}
+
+		min = x[0];
+		for(int i = 0; i<=5; i++)
+		{
+		    if(x[i] < min) min = x[i];
+		}
+		double mean = (x[0]+x[1]+x[2]+x[3]+x[4]+x[5])/6.0;
+
+		double meanquad= (x[0]*x[0]+x[1]*x[1]+x[2]*x[2]+x[3]*x[3]+x[4]*x[4]+x[5]*x[5])/6.0;
+		double sd = sqrt(mean+meanquad);
+		printf("%5d %7.0f %10.0f %10.0f %10.0f %8.0f %3.0f %3.0f %3.0f %3.0f %3.0f\n",n, min, max, mean, sd , x[0],x[1],x[2],x[3],x[4],x[5]);
+		n++;
+	}
+}
+
+int main(){
 	return 0;
 }

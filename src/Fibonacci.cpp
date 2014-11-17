@@ -1,9 +1,9 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>
-//#include <chrono>
 #include <iostream>
 #include <assert.h>
+#include <windows.h>
 using namespace std;
 
 
@@ -102,6 +102,7 @@ unsigned long Fibonacci5(int n){ // function that uses only one term, which was 
 	return (unsigned long)erg;
 }
 
+
 unsigned long Fibonacci6(int n){  //Simple LookupTable for Fibonaccinumbers with open end, only limited by my own lazyness
 	if(n<=1) return n;
 	unsigned long lookup_table[]={0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946,17711,28657,46368,75025,121393,196418,317811,514229,832040,1346269,2178309,3524578,5702887,9227465,14930352,24157817,39088169,63245986,102334155,165580141,267914296,433494437,701408733,1134903170,1836311903,2971215073,4807526976,7778742049,12586269025,20365011074,32951280099,53316291173,86267571272,139583862445,225851433717,365435296162,591286729879,956722026041,1548008755920,2504730781961,4052739537881,6557470319842,10610209857723,17167680177565,27777890035288,44945570212853,72723460248141,117669030460994,190392490709135,308061521170129,498454011879264,806515533049393,1304969544928657,2111485077978050,3416454622906707,5527939700884757,8944394323791464,14472334024676221,23416728348467685,37889062373143906,61305790721611591,99194853094755497,160500643816367088,259695496911122585,420196140727489673,679891637638612258,1100087778366101931,1779979416004714189,2880067194370816120,4660046610375530309,7540113804746346429,12200160415121876738};
@@ -109,16 +110,28 @@ unsigned long Fibonacci6(int n){  //Simple LookupTable for Fibonaccinumbers with
 	return lookup_table[n];
 }
 
-//auto MeasureTime(int n, int i){  //Measures the time of a Fibonacci-function, which calculates the n-th Fibonaccinumber, 'i' will tell which function to use 
-//	assert(1<=i<=6);
-	
-//	auto start = chrono::high_resolution_clock::now();
 
-//    auto stop = chrono::high_resolution_clock::now();    
-//    auto elapsed = stop - start;
-//    auto us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();  
-//	return us;
-//}
+double MeasureTime(int n, int i){  //Measures the time of a Fibonacci-function, using the Hertz of the Computer to work exactly enough. Calculates the n-th Fibonaccinumber, 'i' will tell which function to use 
+	assert(1<=i && i<=6);
+    LARGE_INTEGER start, end, freq;
+  
+	QueryPerformanceFrequency(&freq);
+	QueryPerformanceCounter(&start); 
+  
+	if (i==1) Fibonacci1(n);
+	if (i==2) Fibonacci2(n);
+	if (i==3) Fibonacci3(n);
+	if (i==4) Fibonacci4(n);
+	if (i==5) Fibonacci5(n);
+	if (i==6) Fibonacci6(n);
+
+	QueryPerformanceCounter(&end);
+    
+	double Hz = freq.QuadPart;			//Hertz of this PC
+	double elapsed = (end.QuadPart - start.QuadPart) * 1000000000 / freq.QuadPart;		//Operations between end and start, divided with the actual Hertz-number of the PC, to get speed. The 10^9 is for the correct unit
+	
+	return elapsed;
+}
 
 __int64 MeasureCycles ( unsigned int loword, unsigned int hiword )  //function that measures the current CPU-cycles
 {
@@ -132,16 +145,21 @@ __int64 MeasureCycles ( unsigned int loword, unsigned int hiword )  //function t
 	return ( (__int64) hiword << 32 ) + loword;
 }
 
-int main(){
+double MeasureCyclesFib(int n, int i){ //function that measures the cycles for different Fibonacci-functions
+	assert(1<=i && i<=6);
 	unsigned int high = 0;
 	unsigned int low = 0; 
 	double CycleStart = MeasureCycles ( low, high );
- 
-	Fibonacci1(5);
- 
+	if (i==1) Fibonacci1(n);
+	if (i==2) Fibonacci2(n);
+	if (i==3) Fibonacci3(n);
+	if (i==4) Fibonacci4(n);
+	if (i==5) Fibonacci5(n);
+	if (i==6) Fibonacci6(n);
 	double CycleEnd = MeasureCycles ( low, high );
-	cout << CycleEnd - CycleStart;
-	int j;
-	cin >> j;
+	return CycleEnd - CycleStart;
+}
+
+int main(){
 	return 0;
 }

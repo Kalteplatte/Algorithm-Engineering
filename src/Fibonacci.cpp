@@ -111,7 +111,7 @@ unsigned long Fibonacci6(int n){  //Simple LookupTable for Fibonaccinumbers with
 }
 
 
-double MeasureTime(int n, int i){  //Measures the time of a Fibonacci-function, using the Hertz of the Computer to work exactly enough. Calculates the n-th Fibonaccinumber, 'i' will tell which function to use 
+double MeasureTime(int n, int i){  //Measures the time of a Fibonacci-function in nanoseconds, using the Hertz of the Computer to work exactly enough. Calculates the n-th Fibonaccinumber, 'i' will tell which function to use 
 	assert(1<=i && i<=6);
     LARGE_INTEGER start, end, freq;
   
@@ -159,7 +159,37 @@ double MeasureCyclesFib(int n, int i){ //function that measures the cycles for d
 	double CycleEnd = MeasureCycles ( low, high );
 	return CycleEnd - CycleStart;
 }
+void OutputTime(int j, int finish){ //creates a chart for exercise04 for the time. Fibonacci(j) is measured till finish
+	printf("%5s %10s %10s %10s %10s %20s\n", "n", "min[ns]", "max[ns]", "mean[ns]", "sd[ns]", "measurements[ns]");
+	int n = 0;
+	double x[6];
+	int i;
+	double min, max;
+	while (n<=finish){
+		for (i=0; i<=5; i++){
+			x[i]=MeasureTime(n,j);
+		}
+	
+		max = x[0];
+		for(int i = 0; i<=5; i++)
+		{
+		     if(x[i] > max) max = x[i];
+		}
 
+		min = x[0];
+		for(int i = 0; i<=5; i++)
+		{
+		    if(x[i] < min) min = x[i];
+		}
+		double mean = (x[0]+x[1]+x[2]+x[3]+x[4]+x[5])/6.0;
+
+		double meanquad= (x[0]*x[0]+x[1]*x[1]+x[2]*x[2]+x[3]*x[3]+x[4]*x[4]+x[5]*x[5])/6.0;
+		double sd = sqrt(mean+meanquad);
+		printf("%5d %7.0f %10.0f %10.0f %10.0f %8.0f %3.0f %3.0f %3.0f %3.0f %3.0f\n",n, min, max, mean, sd , x[0],x[1],x[2],x[3],x[4],x[5]);
+		n++;
+	}
+}
 int main(){
+	
 	return 0;
 }

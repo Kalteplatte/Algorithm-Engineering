@@ -3,7 +3,8 @@
 #include <math.h>
 #include <iostream>
 #include <assert.h>
-#include <windows.h>
+#include <chrono>
+#include "fibonacci.h"
 using namespace std;
 
 
@@ -111,31 +112,25 @@ unsigned long Fibonacci6(int n){  //Simple LookupTable for Fibonaccinumbers with
 }
 
 
-double MeasureTime(int n, int i){  //Measures the time of a Fibonacci-function in nanoseconds, using the Hertz of the Computer to work exactly enough. Calculates the n-th Fibonaccinumber, 'i' will tell which function to use 
-	assert(1<=i && i<=6);
-    LARGE_INTEGER start, end, freq;
-  
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&start); 
-  
-	if (i==1) Fibonacci1(n);
-	if (i==2) Fibonacci2(n);
-	if (i==3) Fibonacci3(n);
-	if (i==4) Fibonacci4(n);
-	if (i==5) Fibonacci5(n);
-	if (i==6) Fibonacci6(n);
+double MeasureTime(int n, unsigned long (*f)(int) ){  //Measures the time of a function in microseconds, 
+	auto start = chrono::high_resolution_clock::now();
 
-	QueryPerformanceCounter(&end);
+	for (int i=1; i<10000; i++) f(n);  //this loop is for correct measurements, because chrono works only down to 100 microseconds
+
+	auto stop = chrono::high_resolution_clock::now();
+
     
-	double elapsed = (end.QuadPart - start.QuadPart) * 1000000000 / freq.QuadPart;		//Operations between end and start, divided with the actual Hertz-number of the PC, to get speed. The 10^9 is for the correct unit
-	
-	return elapsed;
+	double elapsed = chrono::duration_cast<chrono::microseconds>(stop-start).count();
+	return elapsed/10000;   // for correct numbers
+
+    return 0;
 }
 
 __int64 MeasureCycles ( unsigned int loword, unsigned int hiword )  //function that measures the current CPU-cycles
 {
 		_asm
 		{
+			cpuid
 			_emit 0x0f	// insert rtdsc opcode
 			_emit 0x31
 			mov hiword , edx
@@ -144,29 +139,24 @@ __int64 MeasureCycles ( unsigned int loword, unsigned int hiword )  //function t
 	return ( (__int64) hiword << 32 ) + loword;
 }
 
-double MeasureCyclesFib(int n, int i){ //function that measures the cycles for different Fibonacci-functions
-	assert(1<=i && i<=6);
+double MeasureCyclesFib(int n, unsigned long (*f) (int)){ //function that measures the cycles for different functions
 	unsigned int high = 0;
 	unsigned int low = 0; 
 	double CycleStart = MeasureCycles ( low, high );
-	if (i==1) Fibonacci1(n);
-	if (i==2) Fibonacci2(n);
-	if (i==3) Fibonacci3(n);
-	if (i==4) Fibonacci4(n);
-	if (i==5) Fibonacci5(n);
-	if (i==6) Fibonacci6(n);
+	f(n);
 	double CycleEnd = MeasureCycles ( low, high );
 	return CycleEnd - CycleStart;
 }
-void OutputTime(int j, int finish){ //creates a chart for exercise04 for the time. Fibonacci(j) is measured till finish
-	printf("%5s %10s %10s %10s %10s %20s\n", "n", "min[ns]", "max[ns]", "mean[ns]", "sd[ns]", "measurements[ns]");
+
+void OutputTime(int finish, unsigned long (*f)(int)){ //creates a chart for exercise04 for the time. f is measured till finish
+	printf("%5s %10s %10s %10s %10s %20s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
 	int n = 0;
 	double x[6];
 	int i;
 	double min, max;
 	while (n<=finish){
 		for (i=0; i<=5; i++){
-			x[i]=MeasureTime(n,j);
+			x[i]=MeasureTime(n,f);
 		}
 	
 		max = x[0];
@@ -190,7 +180,7 @@ void OutputTime(int j, int finish){ //creates a chart for exercise04 for the tim
 }
 
 
-void OutputCycle(int j, int finish){ //creates a chart for exercise04 for the cycles. Fibonacci(j) is measured till finish
+void OutputCycle(int finish, unsigned long (*f)(int)){ //creates a chart for exercise04 for the cycles. f is measured till finish
 	printf("%5s %10s %10s %10s %10s %20s\n", "n", "min", "max", "mean", "sd", "measurements");
 	int n = 0;
 	double x[6];
@@ -198,7 +188,7 @@ void OutputCycle(int j, int finish){ //creates a chart for exercise04 for the cy
 	double min, max;
 	while (n<=finish){
 		for (i=0; i<=5; i++){
-			x[i]=MeasureCyclesFib(n,j);
+			x[i]=MeasureCyclesFib(n,f);
 		}
 	
 		max = x[0];
@@ -221,6 +211,11 @@ void OutputCycle(int j, int finish){ //creates a chart for exercise04 for the cy
 	}
 }
 
+
 int main(){
+
+	OutputTime(10,Fibonacci2);
+	int i;
+	cin >> i;
 	return 0;
 }

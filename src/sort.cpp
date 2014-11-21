@@ -42,8 +42,17 @@ vector <double> quicksort(vector <double> sort, bool (*f)(double,double)){
 	return split_lo;
 }
 
-vector <double> insertionSort(vector <double> sort){
-
+vector <double> insertionSort(vector <double> sort,bool (*f)(double,double)){
+	int k;
+	for (int i=0;i<sort.size();i++){
+		k=i;
+		for (int j = i;j>=0;j--){
+			if (f(sort[k],sort[j])==0) {
+				swap(sort[k],sort[j]);
+				k=j;
+			}
+		}
+	}
 	return sort;
 }
 
@@ -54,7 +63,7 @@ int main(){
 	for (int j=0;j<v.size();j++) v[j]=rand() %100;
 	for (int k = 0;k<v.size();k++) cout << v[k] << " ";
 	cout << endl;
-	v=quicksort(v,lesser);
+	v=insertionSort(v,mores);
 	for (int i = 0;i<v.size();i++) cout << v[i] << " ";
 	return 0;
 }

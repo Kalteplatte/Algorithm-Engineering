@@ -4,7 +4,6 @@
 #include <iostream>
 #include <assert.h>
 #include <chrono>
-#include "fibonacci.h"
 using namespace std;
 
 
@@ -214,8 +213,5 @@ void OutputCycle(int finish, unsigned long (*f)(int)){ //creates a chart for exe
 
 int main(){
 
-	OutputTime(10,Fibonacci2);
-	int i;
-	cin >> i;
 	return 0;
 }

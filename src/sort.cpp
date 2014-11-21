@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <algorithm>
 #include <utility>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 bool lesser(double a, double b){
@@ -44,11 +46,12 @@ vector <double> insertionSort(vector <double> sort){
 
 
 int main(){
-	vector <double> v (4,4);
-	v[0]=1;
-    v[1]=3;
-	v[2]=2;
+	srand (time(NULL));
+	vector <double> v (9);
+	for (int j=0;j<v.size();j++) v[j]=rand() %100;
+	for (int k = 0;k<v.size();k++) cout << v[k] << " ";
+	cout << endl;
 	v=quicksort(v,lesser);
-	for (int i = 0;i<v.size();i++) cout << v[i];
+	for (int i = 0;i<v.size();i++) cout << v[i] << " ";
 	return 0;
 }

@@ -99,6 +99,16 @@ unsigned long Fibonacci4(int n){ // function that uses a matrix to get the Fibon
 	vector< vector<double> > fib;
 	fib.resize( 2 , vector<double>( 2 , 1 ) );       // setting the Fibonacci Matrix fib = |0 1| , note that the n-th Fibonaccinumber is also the number at fib^n [0][1]
 	fib[0][0]=0;                                     //                                    |1 1|                                                         (or fib^n [1][0], because fib is symmetric)
+	unsigned long Output = (unsigned long)ExponentiationBySquaring(fib,n)[0][1];
+	return Output;
+}
+
+unsigned long Fibonacci41(int n){ // function that uses a matrix to get the Fibonaccinumbers and runs in logarithmic time and logarithmic memory, but works only till n=78
+	assert (n>=0);
+	if (n<=1) return n;
+	vector< vector<double> > fib;
+	fib.resize( 2 , vector<double>( 2 , 1 ) );       // setting the Fibonacci Matrix fib = |0 1| , note that the n-th Fibonaccinumber is also the number at fib^n [0][1]
+	fib[0][0]=0;                                     //                                    |1 1|                                                         (or fib^n [1][0], because fib is symmetric)
 	unsigned long Output = (unsigned long)MatrixExponentiation(fib,n)[0][1];
 	return Output;
 }
@@ -223,12 +233,12 @@ void OutputCycle(int finish, unsigned long (*f)(int)){ //creates a chart for exe
 
 
 int main(){
-	int n=79;
-	//assert(Fibonacci1(10)==Fibonacci6(10));
-	assert(Fibonacci2(n)==Fibonacci6(n));
-	assert(Fibonacci3(n)==Fibonacci6(n));
-	//assert(Fibonacci4(n)==Fibonacci6(n));
-	//assert(Fibonacci5(n)==Fibonacci6(n));
-	cout << Fibonacci4(n) << endl << Fibonacci5(n) << endl << Fibonacci6(n);
+	int n=60;
+	assert(Fibonacci1(n)=Fibonacci6(n));
+	assert(Fibonacci2(n)=Fibonacci6(n));
+	assert(Fibonacci3(n)=Fibonacci6(n));
+	assert(Fibonacci4(n)=Fibonacci6(n));
+	assert(Fibonacci41(n)=Fibonacci6(n));
+	assert(Fibonacci5(n)=Fibonacci6(n));
 	return 0;
 }

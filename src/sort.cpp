@@ -27,8 +27,8 @@ vector <double> quicksort(vector <double> sort, bool (*f)(double,double)){
 	for (int i=0; i<=(sort.size()-1) ;i++){
 		if (f(sort[i],index)==0){ 
 			swap(sort[i],sort[j]);           // not beautiful. But it works and works faster than 'insert' 
-			if (j+1!=i)	{					 
-				swap(sort[j+1],sort[i]);
+			if (j+1!=i)	{					 //
+				swap(sort[j+1],sort[i]);	 //
 			}
 			j++;							//index was moved "one step to the right"
 		}
@@ -59,11 +59,21 @@ vector <double> insertionSort(vector <double> sort,bool (*f)(double,double)){
 
 int main(){
 	srand (time(NULL));
-	vector <double> v (10);
-	for (int j=0;j<v.size();j++) v[j]=rand() %100;
-	for (int k = 0;k<v.size();k++) cout << v[k] << " ";
+	int n=10;
+	vector <double> v (n);
+	for (int j=0;j<n;j++) v[j]=rand() %100;
+	for (int j=0;j<n;j++) cout << v[j] << " ";
 	cout << endl;
-	v=insertionSort(v,mores);
-	for (int i = 0;i<v.size();i++) cout << v[i] << " ";
+	vector <double> w=insertionSort(v,mores);
+	vector <double> x=insertionSort(v,lesser);
+	for (int j=1;j<n;j++){
+		if (w[j-1]<w[j]) cout << "Fehler bei mores bei " << j << endl;
+		if (x[j-1]>x[j]) cout << "Fehler bei lesser bei " << j << endl;
+	}
+
+	for (int i = 0;i<n;i++) cout << w[i] << " ";
+	cout << endl;
+	for (int i = 0;i<n;i++) cout << x[i] << " ";
+
 	return 0;
 }

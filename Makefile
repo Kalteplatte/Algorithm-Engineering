@@ -1,43 +1,58 @@
 CXX= cl/EHsc
 CXXFLAGS=
-SOURCE= src/Fibonacci.cpp
-EXECUTABLE= Fibonacci.exe
-EXE_TEST= src/test.cpp
 DELETE= -del
-OBJECT= Fibonacci.obj
+
+SOURCE= src/fibonacci.cpp
+EXECUTABLE= fibonacci.exe
+OBJS= fibonacci.obj
+
+#SOURCE= src/sort.cpp
+#EXECUTABLE= sort.exe
+#OBJS= sort.obj
+
+
+TEST= src/test.cpp
+TEST_EXE= test.exe
+TEST_OBJ= test.obj
+
 RUNORDER=
 
 .PHONY all:
-all: build run
+all: build
 
 .PHONY build:
-build: $(EXECUTABLE)
-
-$(EXECUTABLE): $(SOURCE)
+build: 
 	$(CXX) $(CXXFLAGS) $(SOURCE)
  
-#.PHONY test:
-#test: testclean testbuild #tests
-
 .PHONY run:
 run: 
 	$(RUNORDER) $(EXECUTABLE) 
 
-#.PHONY testbuild:
-#testbuild: 
-#	$(CXX) $(CXXFLAGS) $(EXE_TEST)
+.PHONY test:
+test: testobj testbuild testrun
+
+.PHONY testobj:
+testobj:  
+	$(CXX) $(CFLAGS) -c $(TEST_OBJ) $(TEST)
+
+.PHONY testbuild:
+testbuild: 
+	link test.obj fibonacci.obj -OUT:test.exe
 
 
-#.PHONY test: test.cpp
-#	./test.cpp
+.PHONY testrun:
+testrun: 
+	$(RUNORDER) $(TEST_EXE)
 
-#.PHONY: testclean
-#testclean: 
-#	$(DELETE) test.obj test.exe
 
 
 .PHONY clean:
 clean: 
-	$(DELETE) $(OBJECT) $(EXECUTABLE)
+	$(DELETE) $(OBJS) $(EXECUTABLE) $(TEST_EXE) $(TEST_OBJ)
 
+# Google Test:
+GTEST_DIR = /gtest
+GTEST_INCLUDE_DIR = /gtest/include/gtest
+GTEST_HEADERS = /gtest/include/gtest/*.h \
+                /gtest/include/gtest/internal/*.h
 

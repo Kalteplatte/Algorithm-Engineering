@@ -4,6 +4,7 @@
 #include <iostream>
 #include <assert.h>
 #include <chrono>
+#include "fibonacci.h"
 using namespace std;
 
 
@@ -142,7 +143,7 @@ double MeasureTime(int n, unsigned long (*f)(int) ){  //Measures the time of a f
     
 	double elapsed = chrono::duration_cast<chrono::microseconds>(stop-start).count();
 	return elapsed/10000;   // for correct numbers
-
+	
     return 0;
 }
 
@@ -194,7 +195,8 @@ void OutputTime(int finish, unsigned long (*f)(int)){ //creates a chart for exer
 
 		double meanquad= (x[0]*x[0]+x[1]*x[1]+x[2]*x[2]+x[3]*x[3]+x[4]*x[4]+x[5]*x[5])/6.0;
 		double sd = sqrt(mean+meanquad);
-		printf("%5d %7.0f %10.0f %10.0f %10.0f %8.0f %3.0f %3.0f %3.0f %3.0f %3.0f\n",n, min, max, mean, sd , x[0],x[1],x[2],x[3],x[4],x[5]);
+		cout << sd << endl;
+		//printf("%5d %7.0f %10.0f %10.0f %10.0f %8.0f %3.0f %3.0f %3.0f %3.0f %3.0f\n",n, min, max, mean, sd , x[0],x[1],x[2],x[3],x[4],x[5]);
 		n++;
 	}
 }
@@ -232,13 +234,6 @@ void OutputCycle(int finish, unsigned long (*f)(int)){ //creates a chart for exe
 }
 
 
-int main(){
-	int n=60;
-	assert(Fibonacci1(n)=Fibonacci6(n));
-	assert(Fibonacci2(n)=Fibonacci6(n));
-	assert(Fibonacci3(n)=Fibonacci6(n));
-	assert(Fibonacci4(n)=Fibonacci6(n));
-	assert(Fibonacci41(n)=Fibonacci6(n));
-	assert(Fibonacci5(n)=Fibonacci6(n));
+/*int main(){
 	return 0;
-}
+}*/

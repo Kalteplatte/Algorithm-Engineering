@@ -9,23 +9,24 @@
 #include <time.h>
 using namespace std;
 
-bool lesser(double a, double b){
-	if(a<b) return 0;
-	return 1;
+
+template <typename T>
+bool lesser(T a, T b){
+	return a<b;
 }
 
-bool mores(double a, double b){
-	if(a>b) return 0;
-	return 1;
+template <typename T>
+bool mores(T a, T b){
+	return a>b;
 }
 
-
-vector <double> quicksort(vector <double> sort, bool (*f)(double,double)){
+template <typename T>
+vector <T> quicksort(vector <T> sort, bool (*f)(T,T)){
 	if (sort.size()<=1) return sort;     //if the vector is empty or only one element, sorting makes no sense
-	double index = sort[0];    //element to sort in this cycle
+	T index = sort[0];    //element to sort in this cycle
 	int j=0;					// j will later show the position of index 
 	for (int i=0; i<=(sort.size()-1) ;i++){
-		if (f(sort[i],index)==0){ 
+		if (f(sort[i],index)){ 
 			swap(sort[i],sort[j]);           // not beautiful. But it works and works faster than 'insert' 
 			if (j+1!=i)	{					 //
 				swap(sort[j+1],sort[i]);	 //
@@ -33,21 +34,22 @@ vector <double> quicksort(vector <double> sort, bool (*f)(double,double)){
 			j++;							//index was moved "one step to the right"
 		}
 	}
-	vector<double> split_lo(sort.begin(), sort.begin() + j);    //split sort in 2 vectors. The first one ends before the index, the second one begins after the index
-	vector<double> split_hi(sort.begin() + j + 1, sort.end());
-	split_lo=quicksort(split_lo,f);
-	split_hi=quicksort(split_hi,f);
-	split_lo.push_back(index);                                  //add index at the end of split_lo
-	for (int k=0;k<split_hi.size();k++) split_lo.push_back(split_hi[k]);
-	return split_lo;
+	vector<T> split(sort.begin() + j + 1, sort.end());
+	sort.erase(sort.begin() + j + 1, sort.end());                    //split sort in 2 vectors. The first one ends before the index, the second one begins after the index
+	sort=quicksort(sort,f);
+	split=quicksort(split,f);
+	sort.push_back(index);                                  //add index at the end of sort
+	for (int k=0;k<split.size();k++) sort.push_back(split[k]);
+	return sort;
 }
 
-vector <double> insertionSort(vector <double> sort,bool (*f)(double,double)){
+template <typename T>
+vector <T> insertionsort(vector <T> sort,bool (*f)(T,T)){
 	int k;
 	for (int i=0;i<sort.size();i++){
 		k=i;
 		for (int j = i;j>=0;j--){
-			if (f(sort[k],sort[j])==0) {
+			if (f(sort[k],sort[j])) {
 				swap(sort[k],sort[j]);
 				k=j;
 			}
@@ -56,6 +58,44 @@ vector <double> insertionSort(vector <double> sort,bool (*f)(double,double)){
 	return sort;
 }
 
+template <typename T>
+vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
+	if (sort.size()<=1) return sort;
+	int n=sort.size();
+	vector<T> split(sort.begin() + n/2, sort.end());
+	sort.erase(sort.begin() + n/2, sort.end());                    
+	sort=mergesort(sort,f);
+	split=mergesort(split,f);
+	int sortcounter=0;
+	int splitcounter=0;
+	vector<T> res(n);
+	int i=0;
+	while (i<n){
+		if(f(split[splitcounter],sort[sortcounter])){
+			res[i]=split[splitcounter];
+			splitcounter++;
+		}else{
+			res[i]=sort[sortcounter];
+			sortcounter++;
+		}
+		i++;
+		if(splitcounter == split.size()){
+			while (sortcounter<sort.size()){
+				res[i]=sort[sortcounter];
+				i++;
+				sortcounter++;
+			}
+		} 
+		if(sortcounter == sort.size()){
+			while (splitcounter<split.size()){
+				res[i]=split[splitcounter];
+				i++;
+				splitcounter++;
+			}
+		}
+	}
+	return res;
+}
 
 int main(){
 	srand (time(NULL));
@@ -64,8 +104,8 @@ int main(){
 	for (int j=0;j<n;j++) v[j]=rand() %100;
 	for (int j=0;j<n;j++) cout << v[j] << " ";
 	cout << endl;
-	vector <double> w=insertionSort(v,mores);
-	vector <double> x=insertionSort(v,lesser);
+	vector <double> w=mergesort(v,mores<double>);
+	vector <double> x=mergesort(v,lesser<double>);
 	for (int j=1;j<n;j++){
 		if (w[j-1]<w[j]) cout << "Fehler bei mores bei " << j << endl;
 		if (x[j-1]>x[j]) cout << "Fehler bei lesser bei " << j << endl;

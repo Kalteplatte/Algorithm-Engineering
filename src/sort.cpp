@@ -4,9 +4,8 @@
 #include <iostream>
 #include <assert.h>
 #include <algorithm>
-#include <utility>
 #include <stdlib.h>
-#include <time.h>
+#include <chrono>
 using namespace std;
 
 
@@ -97,23 +96,91 @@ vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
 	return res;
 }
 
-int main(){
-	srand (time(NULL));
-	int n=10;
-	vector <double> v (n);
-	for (int j=0;j<n;j++) v[j]=rand() %100;
-	for (int j=0;j<n;j++) cout << v[j] << " ";
-	cout << endl;
-	vector <double> w=mergesort(v,mores<double>);
-	vector <double> x=mergesort(v,lesser<double>);
-	for (int j=1;j<n;j++){
-		if (w[j-1]<w[j]) cout << "Fehler bei mores bei " << j << endl;
-		if (x[j-1]>x[j]) cout << "Fehler bei lesser bei " << j << endl;
+template<typename T>
+void test (vector<T> w, bool(*f)(T,T)){
+	for (int j=1;j<w.size();j++){
+		assert(f(w[j-1],w[j]) || w[j-1]==w[j]);
 	}
+}
 
-	for (int i = 0;i<n;i++) cout << w[i] << " ";
-	cout << endl;
-	for (int i = 0;i<n;i++) cout << x[i] << " ";
+
+
+int main(){
+	int n=1000;
+	vector <double> v (n);
+	vector <double> w (n);
+	vector <double> x (n);
+	
+	
+	w=quicksort(v,mores<double>);						/*sort vector with identical elements, v=(0,0,...,0,0)*/
+	x=quicksort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=insertionsort(v,mores<double>);
+	x=insertionsort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=mergesort(v,mores<double>);
+	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+
+	srand (1);											
+	for (int j=0;j<n;j++) v[j]=rand() %1000;			/*random permutated vector with (mostly) different elements*/
+	w=quicksort(v,mores<double>);
+	x=quicksort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=insertionsort(v,mores<double>);
+	x=insertionsort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=mergesort(v,mores<double>);
+	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+
+	for (int j=0;j<n;j++) v[j]=rand() %10;			/*random permutated vector with repeating elements*/
+	w=quicksort(v,mores<double>);
+	x=quicksort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=insertionsort(v,mores<double>);
+	x=insertionsort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=mergesort(v,mores<double>);
+	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+
+	for (int j=0;j<n;j++) v[j]=j;			/*sorted vector (for lesser, for mores this one is reverse)*/
+	w=quicksort(v,mores<double>);
+	x=quicksort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=insertionsort(v,mores<double>);
+	x=insertionsort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=mergesort(v,mores<double>);
+	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+
+	for (int j=0;j<n;j++) v[j]=n-j;			/*reverse sorted vector (for mores, for lesser this one is sorted)*/
+	w=quicksort(v,mores<double>);
+	x=quicksort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=insertionsort(v,mores<double>);
+	x=insertionsort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=mergesort(v,mores<double>);
+	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
 
 	return 0;
 }

@@ -42,6 +42,32 @@ vector <T> quicksort(vector <T> sort, bool (*f)(T,T)){
 	return sort;
 }
 
+
+
+/*new implementation of quicksort, which is in-place
+note that this is a void.
+Initialize this void with quicksort2(vector sort,0,sort.size()-1,f)*/
+template <typename T>
+void quicksort2(vector <T>& sort, int left, int right,bool(*f)(T,T)){
+	int i = left;
+	int j = right;
+	T pivot = sort[left];					//chooses the first element of the vector as pivot
+	while (i <= j) {
+        while (f(sort[i],pivot))			//sets i, so that i = min(k \in {0,...,sort.size()-1}: !f(sort[k],pivot))		
+              i++;
+        while (f(pivot,sort[j]))			//sets j, so that j = max(k \in {0,...,sort.size()-1}: !f(pivot,sort[k]))
+              j--;
+        if (i <= j) {
+			  swap(sort[i],sort[j]);		//because !f(sort[i],pivot) and !f(pivot,sort[j]) we can swap both
+              i++;
+              j--;
+		}
+	}
+	if (left<j)quicksort2(sort, left, j,f);		//left side of the vector, if necessary
+	if (i<right)quicksort2(sort, i, right,f);	//right side of the vector, if necessary
+}
+
+
 template <typename T>
 vector <T> insertionsort(vector <T> sort,bool (*f)(T,T)){
 	int k;
@@ -56,6 +82,7 @@ vector <T> insertionsort(vector <T> sort,bool (*f)(T,T)){
 	}
 	return sort;
 }
+
 
 template <typename T>
 vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
@@ -106,14 +133,33 @@ void test (vector<T> w, bool(*f)(T,T)){
 
 
 int main(){
-	int n=1000;
+	int n=10;
 	vector <double> v (n);
 	vector <double> w (n);
 	vector <double> x (n);
-	
-	
-	w=quicksort(v,mores<double>);						/*sort vector with identical elements, v=(0,0,...,0,0)*/
-	x=quicksort(v,lesser<double>);
+	int i;
+	w=v;
+	x=v;
+	quicksort2(w,0,n-1,mores<double>);
+	quicksort2(x,0,n-1,mores<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	srand (1);											
+	for (int j=0;j<n;j++) v[j]=rand() %100;
+	w=v;
+	x=v;
+	quicksort2(w,0,n-1,mores<double>);
+	quicksort2(x,0,n-1,lesser<double>);
+	for (i=0;i<n;i++) cout << v[i] << " ";
+	cout << endl;
+	for (i=0;i<n;i++) cout << w[i] << " ";
+	cout << endl;
+	for (i=0;i<n;i++) cout << x[i] << " ";
+	cout << endl;
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	/*w=quicksort(v,mores<double>);						/*sort vector with identical elements, v=(0,0,...,0,0)*/
+	/*x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
 	w=insertionsort(v,mores<double>);
@@ -127,7 +173,7 @@ int main(){
 
 	srand (1);											
 	for (int j=0;j<n;j++) v[j]=rand() %1000;			/*random permutated vector with (mostly) different elements*/
-	w=quicksort(v,mores<double>);
+	/*w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
@@ -141,7 +187,7 @@ int main(){
 	test (x, lesser<double>);
 
 	for (int j=0;j<n;j++) v[j]=rand() %10;			/*random permutated vector with repeating elements*/
-	w=quicksort(v,mores<double>);
+	/*w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
@@ -155,7 +201,7 @@ int main(){
 	test (x, lesser<double>);
 
 	for (int j=0;j<n;j++) v[j]=j;			/*sorted vector (for lesser, for mores this one is reverse)*/
-	w=quicksort(v,mores<double>);
+	/*w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
@@ -169,7 +215,7 @@ int main(){
 	test (x, lesser<double>);
 
 	for (int j=0;j<n;j++) v[j]=n-j;			/*reverse sorted vector (for mores, for lesser this one is sorted)*/
-	w=quicksort(v,mores<double>);
+	/*w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
@@ -180,7 +226,7 @@ int main(){
 	w=mergesort(v,mores<double>);
 	x=mergesort(v,lesser<double>);
 	test (w, mores<double>);
-	test (x, lesser<double>);
+	test (x, lesser<double>);*/
 
 	return 0;
 }

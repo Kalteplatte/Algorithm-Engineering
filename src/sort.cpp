@@ -123,6 +123,24 @@ vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
 	return res;
 }
 
+template <typename T>
+void mergesort2(vector<T>& sort, int left, int right, bool(*f)(T,T)){		/*trying to implement mergesort in-place*/
+	if (left<right){
+		mergesort2(sort,left,left+(right-left)/2,f);
+		mergesort2(sort,left+(right-left)/2+1,right,f);
+		int i=left+(right-left)/2;
+		int j=i+1;
+		while (j <=right && f(sort[j],sort[i])){
+			while (i>=left && f(sort[i+1],sort[i])) {
+				swap(sort[i],sort[i+1]);
+				i--;
+			}
+			j++;
+			i=j-1;
+		}
+	}
+}
+
 template<typename T>
 void test (vector<T> w, bool(*f)(T,T)){
 	for (int j=1;j<w.size();j++){
@@ -133,7 +151,7 @@ void test (vector<T> w, bool(*f)(T,T)){
 
 
 int main(){
-	int n=1000;
+	int n=10;
 	vector <double> v (n);
 	vector <double> w (n);
 	vector <double> x (n);
@@ -146,6 +164,12 @@ int main(){
 	x=v;
 	quicksort2(w,0,n-1,mores<double>);
 	quicksort2(x,0,n-1,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=v;
+	x=v;
+	mergesort2(w,0,n-1,mores<double>);
+	mergesort2(x,0,n-1,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
 	w=insertionsort(v,mores<double>);
@@ -169,6 +193,12 @@ int main(){
 	quicksort2(x,0,n-1,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
+	w=v;
+	x=v;
+	mergesort2(w,0,n-1,mores<double>);
+	mergesort2(x,0,n-1,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
 	w=insertionsort(v,mores<double>);
 	x=insertionsort(v,lesser<double>);
 	test (w, mores<double>);
@@ -187,6 +217,12 @@ int main(){
 	x=v;
 	quicksort2(w,0,n-1,mores<double>);
 	quicksort2(x,0,n-1,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=v;
+	x=v;
+	mergesort2(w,0,n-1,mores<double>);
+	mergesort2(x,0,n-1,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
 	w=insertionsort(v,mores<double>);
@@ -209,6 +245,12 @@ int main(){
 	quicksort2(x,0,n-1,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
+	w=v;
+	x=v;
+	mergesort2(w,0,n-1,mores<double>);
+	mergesort2(x,0,n-1,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
 	w=insertionsort(v,mores<double>);
 	x=insertionsort(v,lesser<double>);
 	test (w, mores<double>);
@@ -229,6 +271,12 @@ int main(){
 	quicksort2(x,0,n-1,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
+	w=v;
+	x=v;
+	mergesort2(w,0,n-1,mores<double>);
+	mergesort2(x,0,n-1,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
 	w=insertionsort(v,mores<double>);
 	x=insertionsort(v,lesser<double>);
 	test (w, mores<double>);
@@ -237,6 +285,5 @@ int main(){
 	x=mergesort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
-
 	return 0;
 }

@@ -19,7 +19,7 @@ bool mores(T a, T b){
 	return a>b;
 }
 
-template <typename T>
+template <typename T> // runs in O(n*log(n))
 vector <T> quicksort(vector <T> sort, bool (*f)(T,T)){
 	if (sort.size()<=1) return sort;     //if the vector is empty or only one element, sorting makes no sense
 	T index = sort[0];    //element to sort in this cycle
@@ -43,7 +43,7 @@ vector <T> quicksort(vector <T> sort, bool (*f)(T,T)){
 }
 
 //new version of mergesort that's in-place, note that it's a void
-template <typename T>
+template <typename T> // runs in O(n*log(n))
 void mergesort2(vector<T>& sort, int left, int right, bool(*f)(T,T)){		
 	if (left<right){
 		mergesort2(sort,left,left+(right-left)/2,f);
@@ -64,7 +64,7 @@ void mergesort2(vector<T>& sort, int left, int right, bool(*f)(T,T)){
 /*new implementation of quicksort, which is in-place
 note that this is a void.
 Initialize this void with quicksort2(vector sort,0,sort.size()-1,f)*/
-template <typename T>
+template <typename T> // runs in O(n*log(n))
 void quicksort2(vector <T>& sort, int left, int right,bool(*f)(T,T)){
 	if (sort.size()<=50){
 		mergesort2(sort,left,right,f);
@@ -96,7 +96,7 @@ void quicksort2(vector <T>& sort, int left, int right,bool(*f)(T,T)){
 }
 
 
-template <typename T>
+template <typename T> // runs in O(n*n)
 vector <T> insertionsort(vector <T> sort,bool (*f)(T,T)){
 	int k;
 	for (int i=0;i<sort.size();i++){
@@ -112,7 +112,7 @@ vector <T> insertionsort(vector <T> sort,bool (*f)(T,T)){
 }
 
 
-template <typename T>
+template <typename T> // runs in O(n*log(n))
 vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
 	if (sort.size()<=1) return sort;
 	int n=sort.size();

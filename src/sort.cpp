@@ -42,22 +42,50 @@ vector <T> quicksort(vector <T> sort, bool (*f)(T,T)){
 	return sort;
 }
 
-
+//new version of mergesort that's in-place, note that it's a void
+template <typename T>
+void mergesort2(vector<T>& sort, int left, int right, bool(*f)(T,T)){		
+	if (left<right){
+		mergesort2(sort,left,left+(right-left)/2,f);
+		mergesort2(sort,left+(right-left)/2+1,right,f);
+		int i=left+(right-left)/2;
+		int j=i+1;
+		while (j <=right && f(sort[j],sort[i])){
+			while (i>=left && f(sort[i+1],sort[i])) {
+				swap(sort[i],sort[i+1]);
+				i--;
+			}
+			j++;
+			i=j-1;
+		}
+	}
+}
 
 /*new implementation of quicksort, which is in-place
 note that this is a void.
 Initialize this void with quicksort2(vector sort,0,sort.size()-1,f)*/
 template <typename T>
 void quicksort2(vector <T>& sort, int left, int right,bool(*f)(T,T)){
+	if (sort.size()<=50){
+		mergesort2(sort,left,right,f);
+		return;
+	}
 	int i = left;
 	int j = right;
-	T pivot = sort[left];					//chooses the first element of the vector as pivot
-	while (i <= j) {
-        while (f(sort[i],pivot))			//sets i, so that i = min(k \in {0,...,sort.size()-1}: !f(sort[k],pivot))		
-              i++;
-        while (f(pivot,sort[j]))			//sets j, so that j = max(k \in {0,...,sort.size()-1}: !f(pivot,sort[k]))
+	int k = 0;
+	T pivot = (sort[left]+sort[right]+sort[left+(right-left)/2])/3;					//chooses the first element of the vector as pivot
+	while (i+k <= j) {
+        while (f(sort[i],pivot)){			//sets i, so that i = min(k \in {0,...,sort.size()-1}: !f(sort[k],pivot))		
+              if (sort[i]==pivot) {
+				  swap(sort[i],sort[i+1+k]);
+				  k++;
+			  }
+              else i++;
+		  }
+        while (f(pivot,sort[j])){			//sets j, so that j = max(k \in {0,...,sort.size()-1}: !f(pivot,sort[k]))
               j--;
-        if (i <= j) {
+		}
+        if (i+k <= j) {
 			  swap(sort[i],sort[j]);		//because !f(sort[i],pivot) and !f(pivot,sort[j]) we can swap both
               i++;
               j--;
@@ -123,23 +151,71 @@ vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
 	return res;
 }
 
-template <typename T>
-void mergesort2(vector<T>& sort, int left, int right, bool(*f)(T,T)){		/*trying to implement mergesort in-place*/
-	if (left<right){
-		mergesort2(sort,left,left+(right-left)/2,f);
-		mergesort2(sort,left+(right-left)/2+1,right,f);
-		int i=left+(right-left)/2;
-		int j=i+1;
-		while (j <=right && f(sort[j],sort[i])){
-			while (i>=left && f(sort[i+1],sort[i])) {
-				swap(sort[i],sort[i+1]);
-				i--;
-			}
-			j++;
-			i=j-1;
-		}
+int parentindex(int Idx){
+	assert(Idx>=0);
+	if (Idx=0) return 0;
+	return (Idx-1)/2;
+}
+
+int leftchild(int Idx){
+	assert(Idx>=0);
+	return Idx*2+1;
+}
+
+int rightchild(int Idx){
+	assert(Idx>=0);
+	return Idx*2+2;
+}
+
+
+template<typename T>
+void isHeap(vector<T> w, bool(*f)(T,T)){
+	for (int i=1;i<w.size();i++){
+		int parentIdx = parentindex(w.size()-i);
+		assert(f(w[parentindex(w.size()-i),w[w.size()-i]) || w[parentindex(w.size()-i)==w[w.size()-i]);
 	}
 }
+
+template<typename T>
+void siftUp(vector<T>& w, bool(*f)(T,T)){
+	vector<T> v=w;
+	v.pop_back();
+
+	//pre-condition
+	isHeap(v,f);
+
+	int Idx=w.size()-1;
+	int parentIdx=parentindex(Idx);
+	while(Idx!=0){
+		if (f(w[Idx],w[parentIdx])){
+			swap(w[Idx],w[parentIdx]);
+		} else break;
+		Idx=parentIdx;
+		parentIdx=parentindex(Idx);
+	}
+}
+
+//TODO
+template<typename T>
+void siftDown(vector<T>& w, bool(*f)(T,T)){
+	vector<T> v=w;
+	v.pop_back();
+
+	//pre-condition
+	isHeap(v,f);
+
+	int Idx=w.size()-1;
+	int parentIdx=parentindex(Idx);
+	while(Idx!=0){
+		if (f(w[Idx],w[parentIdx])){
+			swap(w[Idx],w[parentIdx]);
+		} else break;
+		Idx=parentIdx;
+		parentIdx=parentindex(Idx);
+	}
+}
+
+
 
 template<typename T>
 void test (vector<T> w, bool(*f)(T,T)){

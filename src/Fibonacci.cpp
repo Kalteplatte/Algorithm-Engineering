@@ -89,8 +89,7 @@ vector<vector<double> > MatrixExponentiation(vector<vector<double> > v, int n){ 
 vector<vector<double> > ExponentiationBySquaring(vector<vector<double> > v, double n){ // function that runs an exponentation in logarithmic time and logarithmic memory
 	if (n==0) return IdentityM(v); 
 	if (n==1) return v;
-	int m =static_cast<int>(n);
-	if ((m%2)==0) return ExponentiationBySquaring(MatrixMult(v,v), n/2.0);
+	if ((n%2)==0) return ExponentiationBySquaring(MatrixMult(v,v), n/2.0);
 	return MatrixMult(v,ExponentiationBySquaring(MatrixMult(v,v), (n-1)/2.0));
 }
 
@@ -232,7 +231,6 @@ void OutputCycle(int finish, unsigned long (*f)(int)){ //creates a chart for exe
 		n++;
 	}
 }
-
 
 /*int main(){
 	return 0;

@@ -153,7 +153,7 @@ vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
 
 int parentindex(int Idx){
 	assert(Idx>=0);
-	if (Idx=0) return 0;
+	if (Idx==0) return 0;
 	return (Idx-1)/2;
 }
 
@@ -170,9 +170,9 @@ int rightchild(int Idx){
 
 template<typename T>
 void isHeap(vector<T> w, bool(*f)(T,T)){
-	for (int i=1;i<w.size();i++){
+	for (int i=1;i<=w.size();i++){
 		int parentIdx = parentindex(w.size()-i);
-		assert(f(w[parentindex(w.size()-i),w[w.size()-i]) || w[parentindex(w.size()-i)==w[w.size()-i]);
+		assert(f(w[parentindex(w.size()-i)],w[w.size()-i]) || w[parentindex(w.size()-i)]==w[w.size()-i]);
 	}
 }
 
@@ -195,23 +195,22 @@ void siftUp(vector<T>& w, bool(*f)(T,T)){
 	}
 }
 
-//TODO
 template<typename T>
 void siftDown(vector<T>& w, bool(*f)(T,T)){
-	vector<T> v=w;
-	v.pop_back();
+	vector<T> v (w.size()-1);
+	for (int j=0;j<v.size();j++) v[j]=w[j+1];
 
 	//pre-condition
 	isHeap(v,f);
 
-	int Idx=w.size()-1;
-	int parentIdx=parentindex(Idx);
-	while(Idx!=0){
-		if (f(w[Idx],w[parentIdx])){
-			swap(w[Idx],w[parentIdx]);
-		} else break;
-		Idx=parentIdx;
-		parentIdx=parentindex(Idx);
+	int Idx=0;
+	int childIdx=leftchild(Idx);
+	while (childIdx<=w.size()){
+		if (childIdx+1==w.size()) return;
+		else if (f(w[childIdx+1],w[childIdx])) childIdx=childIdx+1;
+		if (f(w[childIdx],w[Idx])) swap(w[childIdx],w[Idx]);
+		Idx = childIdx;
+		childIdx=leftchild(Idx);		
 	}
 }
 
@@ -232,7 +231,21 @@ int main(){
 	vector <double> w (n);
 	vector <double> x (n);
 	
-	w=quicksort(v,mores<double>);						/*sort vector with identical elements, v=(0,0,...,0,0)*/
+/*	for (int i=0;i<n;i++){
+		v[i]=i;
+	}
+	v.insert(v.begin(),2);
+	for (int k=0;k<v.size();k++){
+		cout << v[k];
+	}
+	cout << endl;
+	siftDown(v,lesser<double>);
+	for (int j=0;j<=n;j++){
+		cout << v[j];
+	}
+	cout << endl;	
+	isHeap(v,lesser<double>);*/
+	w=quicksort(v,mores<double>);						//sort vector with identical elements, v=(0,0,...,0,0)
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
@@ -258,7 +271,7 @@ int main(){
 	test (x, lesser<double>);
 
 	srand (1);											
-	for (int j=0;j<n;j++) v[j]=rand() %1000;			/*random permutated vector with (mostly) different elements*/
+	for (int j=0;j<n;j++) v[j]=rand() %1000;			//random permutated vector with (mostly) different elements
 	w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
@@ -284,7 +297,7 @@ int main(){
 	test (w, mores<double>);
 	test (x, lesser<double>);
 
-	for (int j=0;j<n;j++) v[j]=rand() %10;			/*random permutated vector with repeating elements*/
+	for (int j=0;j<n;j++) v[j]=rand() %10;			//random permutated vector with repeating elements
 	w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
@@ -310,7 +323,7 @@ int main(){
 	test (w, mores<double>);
 	test (x, lesser<double>);
 
-	for (int j=0;j<n;j++) v[j]=j;			/*sorted vector (for lesser, for mores this one is reverse)*/
+	for (int j=0;j<n;j++) v[j]=j;			//sorted vector (for lesser, for mores this one is reverse)
 	w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
@@ -336,7 +349,7 @@ int main(){
 	test (w, mores<double>);
 	test (x, lesser<double>);
 
-	for (int j=0;j<n;j++) v[j]=n-j;			/*reverse sorted vector (for mores, for lesser this one is sorted)*/
+	for (int j=0;j<n;j++) v[j]=n-j;			//reverse sorted vector (for mores, for lesser this one is sorted)
 	w=quicksort(v,mores<double>);
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);

@@ -9,16 +9,20 @@
 using namespace std;
 
 
+// function to determinine order of vector
 template <typename T>
 bool lesser(T a, T b){
 	return a<b;
 }
 
+// function to determinine order of vector
 template <typename T>
 bool mores(T a, T b){
 	return a>b;
 }
 
+
+//slow version becuase it's not in-place
 template <typename T> // runs in O(n*log(n))
 vector <T> quicksort(vector <T> sort, bool (*f)(T,T)){
 	if (sort.size()<=1) return sort;     //if the vector is empty or only one element, sorting makes no sense
@@ -43,19 +47,21 @@ vector <T> quicksort(vector <T> sort, bool (*f)(T,T)){
 }
 
 //new version of mergesort that's in-place, note that it's a void
+//left and right show the interval that shall be sorted in sort, so the void is started with left=0 and right=sort.size()-1
 template <typename T> // runs in O(n*log(n))
 void mergesort2(vector<T>& sort, int left, int right, bool(*f)(T,T)){		
-	if (left<right){
-		mergesort2(sort,left,left+(right-left)/2,f);
-		mergesort2(sort,left+(right-left)/2+1,right,f);
+	if (left<right){										//if the two rows right under this one give us a vector that's empty or 'filled negative' do nothing
+		mergesort2(sort,left,left+(right-left)/2,f);		//use mergesort on the left side of the vector
+		mergesort2(sort,left+(right-left)/2+1,right,f);		//use mergesort on the right side of the vector
 		int i=left+(right-left)/2;
-		int j=i+1;
-		while (j <=right && f(sort[j],sort[i])){
-			while (i>=left && f(sort[i+1],sort[i])) {
-				swap(sort[i],sort[i+1]);
+		int j=i+1;											//start with the index left of the middle of sort (=i) and right of the middle (=j), because from left to i and from j to right the vector is sorted
+
+		while (j <=right && f(sort[j],sort[i])){			//to go on we have to be inside of the vector. Since we increase j, j has to fullfill j<=right. 
+			while (i>=left && f(sort[i+1],sort[i])) {		//same here, but we decrase i
+				swap(sort[i],sort[i+1]);					//let the element, that's primary on i+1, 'walk' to the right position, so that the vector is sorted from left to j (because at the start i+1=j)
 				i--;
 			}
-			j++;
+			j++;											//repeat with the next element
 			i=j-1;
 		}
 	}
@@ -95,7 +101,7 @@ void quicksort2(vector <T>& sort, int left, int right,bool(*f)(T,T)){
 	if (i<right)quicksort2(sort, i, right,f);	//right side of the vector, if necessary
 }
 
-
+//simple implementation of insertionsort
 template <typename T> // runs in O(n*n)
 vector <T> insertionsort(vector <T> sort,bool (*f)(T,T)){
 	int k;
@@ -151,23 +157,26 @@ vector <T> mergesort(vector<T> sort, bool(*f)(T,T)){
 	return res;
 }
 
+//finds the parentindex for a vector that shall be sorted with heap
 int parentindex(int Idx){
 	assert(Idx>=0);
 	if (Idx==0) return 0;
 	return (Idx-1)/2;
 }
 
+//finds the index of the left child for a vector that shall be sorted with heap
 int leftchild(int Idx){
 	assert(Idx>=0);
 	return Idx*2+1;
 }
 
+//finds the index of the left child for a vector that shall be sorted with heap
 int rightchild(int Idx){
 	assert(Idx>=0);
 	return Idx*2+2;
 }
 
-
+//check if the vector is sorted for the heapstructure
 template<typename T>
 void isHeap(vector<T> w, bool(*f)(T,T)){
 	for (int i=1;i<=w.size();i++){
@@ -176,6 +185,7 @@ void isHeap(vector<T> w, bool(*f)(T,T)){
 	}
 }
 
+//a vector w (that has heapstructure) gets a new element at the end, and it has to be a heap again
 template<typename T>
 void siftUp(vector<T>& w, bool(*f)(T,T)){
 	vector<T> v=w;
@@ -195,6 +205,7 @@ void siftUp(vector<T>& w, bool(*f)(T,T)){
 	}
 }
 
+//a vector w (that has heapstructure) gets a new element at the beginning, and it has to be a heap again
 template<typename T>
 void siftDown(vector<T>& w, bool(*f)(T,T)){
 	vector<T> v (w.size()-1);

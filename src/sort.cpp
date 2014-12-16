@@ -176,10 +176,11 @@ int rightchild(int Idx){
 	return Idx*2+2;
 }
 
-//check if the vector is sorted for the heapstructure
+//check if the vector from start to vector.end is sorted in heapstructure.
+//to check the whole vector, set start=1
 template<typename T>
-void isHeap(vector<T> w, bool(*f)(T,T)){
-	for (int i=1;i<=w.size();i++){
+void isHeap(vector<T> w, bool(*f)(T,T),int start){
+	for (int i=start;i<=w.size();i++){
 		int parentIdx = parentindex(w.size()-i);
 		assert(f(w[parentindex(w.size()-i)],w[w.size()-i]) || w[parentindex(w.size()-i)]==w[w.size()-i]);
 	}
@@ -192,7 +193,7 @@ void siftUp(vector<T>& w, bool(*f)(T,T)){
 	v.pop_back();
 
 	//pre-condition
-	isHeap(v,f);
+	isHeap(v,f,1);
 
 	int Idx=w.size()-1;
 	int parentIdx=parentindex(Idx);
@@ -203,16 +204,16 @@ void siftUp(vector<T>& w, bool(*f)(T,T)){
 		Idx=parentIdx;
 		parentIdx=parentindex(Idx);
 	}
+
+	//postcondition
+	isHeap(v,f,1);
 }
 
 //a vector w (that has heapstructure) gets a new element at the beginning, and it has to be a heap again
 template<typename T>
 void siftDown(vector<T>& w, bool(*f)(T,T)){
-	vector<T> v (w.size()-1);
-	for (int j=0;j<v.size();j++) v[j]=w[j+1];
-
 	//pre-condition
-	isHeap(v,f);
+	isHeap(w,f,3);
 
 	int Idx=0;
 	int childIdx=leftchild(Idx);
@@ -223,6 +224,8 @@ void siftDown(vector<T>& w, bool(*f)(T,T)){
 		Idx = childIdx;
 		childIdx=leftchild(Idx);		
 	}
+	//postcondition
+	isHeap(v,f,1);
 }
 
 
@@ -255,7 +258,7 @@ int main(){
 		cout << v[j];
 	}
 	cout << endl;	
-	isHeap(v,lesser<double>);*/
+	isHeap(v,lesser<double>,1);*/
 	w=quicksort(v,mores<double>);						//sort vector with identical elements, v=(0,0,...,0,0)
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);

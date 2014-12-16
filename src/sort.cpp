@@ -176,26 +176,24 @@ int rightchild(int Idx){
 	return Idx*2+2;
 }
 
-//check if the vector from start to vector.end is sorted in heapstructure.
-//to check the whole vector, set start=1
+//check if the vector is sorted for the heapstructure from index start to index end
 template<typename T>
-void isHeap(vector<T> w, bool(*f)(T,T),int start){
-	for (int i=start;i<=w.size();i++){
-		int parentIdx = parentindex(w.size()-i);
-		assert(f(w[parentindex(w.size()-i)],w[w.size()-i]) || w[parentindex(w.size()-i)]==w[w.size()-i]);
+void isHeap(vector<T> w, bool(*f)(T,T), int start, int end){
+	if (leftchild(start)>=end) return;
+	for (int i=leftchild(start);i<=end;i++){
+		//assert(f(w[parentindex(i)],w[i]) || w[parentindex(i)]==w[i]);
 	}
 }
 
-//a vector w (that has heapstructure) gets a new element at the end, and it has to be a heap again
+
+
+//a vector w (that has heapstructure from index 0 to index end-1) gets a new element at the index 'end'. Now this vector shall have heapstructure from 0 to end
 template<typename T>
-void siftUp(vector<T>& w, bool(*f)(T,T)){
-	vector<T> v=w;
-	v.pop_back();
-
+void siftUp(vector<T>& w, bool(*f)(T,T),int end){
 	//pre-condition
-	isHeap(v,f,1);
+	isHeap(w,f,0,end);
 
-	int Idx=w.size()-1;
+	int Idx=end;
 	int parentIdx=parentindex(Idx);
 	while(Idx!=0){
 		if (f(w[Idx],w[parentIdx])){
@@ -204,16 +202,13 @@ void siftUp(vector<T>& w, bool(*f)(T,T)){
 		Idx=parentIdx;
 		parentIdx=parentindex(Idx);
 	}
-
-	//postcondition
-	isHeap(v,f,1);
 }
 
 //a vector w (that has heapstructure) gets a new element at the beginning, and it has to be a heap again
 template<typename T>
 void siftDown(vector<T>& w, bool(*f)(T,T)){
 	//pre-condition
-	isHeap(w,f,3);
+	isHeap(v,f,1,v.end());
 
 	int Idx=0;
 	int childIdx=leftchild(Idx);
@@ -224,11 +219,25 @@ void siftDown(vector<T>& w, bool(*f)(T,T)){
 		Idx = childIdx;
 		childIdx=leftchild(Idx);		
 	}
-	//postcondition
-	isHeap(v,f,1);
 }
 
+//transforms a vector w into a vector with the heap-structure
+template<typename T>
+void createHeap (vector<T>& w, bool(*f)(T,T),int end){
+	for (int i=0;i<=end;i++){
+		siftUp(w,f,i);
+	}
+}
 
+//sorts vector by using the heapstructure to get the smallest/biggest element
+//note that this void needs another function g with !g=f
+template<typename T>
+void heapSort (vector<T>& sort, bool(*f)(T,T),  bool(*g)(T,T)){
+	for (int i=1;i<=sort.size();i++){
+		createHeap(sort,g,sort.size()-i);
+		swap(sort[0],sort[sort.size()-i]);
+	}
+}
 
 template<typename T>
 void test (vector<T> w, bool(*f)(T,T)){
@@ -245,20 +254,20 @@ int main(){
 	vector <double> w (n);
 	vector <double> x (n);
 	
-/*	for (int i=0;i<n;i++){
-		v[i]=i;
-	}
-	v.insert(v.begin(),2);
+
+	/*srand (1);											
+	for (int j=0;j<n;j++) v[j]=rand() %1000;
 	for (int k=0;k<v.size();k++){
-		cout << v[k];
+		cout << v[k] << " ";
 	}
 	cout << endl;
-	siftDown(v,lesser<double>);
-	for (int j=0;j<=n;j++){
-		cout << v[j];
+
+	heapSort(v,lesser<double>, mores<double>);
+	for (int j=0;j<n;j++){
+		cout << v[j] << " ";
 	}
 	cout << endl;	
-	isHeap(v,lesser<double>,1);*/
+	test(v,lesser<double>);*/
 	w=quicksort(v,mores<double>);						//sort vector with identical elements, v=(0,0,...,0,0)
 	x=quicksort(v,lesser<double>);
 	test (w, mores<double>);
@@ -281,6 +290,12 @@ int main(){
 	test (x, lesser<double>);
 	w=mergesort(v,mores<double>);
 	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=v;
+	x=v;
+	heapSort(w,mores<double>, lesser<double>);
+	heapSort(x,lesser<double>, mores<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
 
@@ -310,6 +325,12 @@ int main(){
 	x=mergesort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
+	w=v;
+	x=v;
+	heapSort(w,mores<double>, lesser<double>);
+	heapSort(x,lesser<double>, mores<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
 
 	for (int j=0;j<n;j++) v[j]=rand() %10;			//random permutated vector with repeating elements
 	w=quicksort(v,mores<double>);
@@ -334,6 +355,12 @@ int main(){
 	test (x, lesser<double>);
 	w=mergesort(v,mores<double>);
 	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=v;
+	x=v;
+	heapSort(w,mores<double>, lesser<double>);
+	heapSort(x,lesser<double>, mores<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
 
@@ -362,6 +389,12 @@ int main(){
 	x=mergesort(v,lesser<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
+	w=v;
+	x=v;
+	heapSort(w,mores<double>, lesser<double>);
+	heapSort(x,lesser<double>, mores<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
 
 	for (int j=0;j<n;j++) v[j]=n-j;			//reverse sorted vector (for mores, for lesser this one is sorted)
 	w=quicksort(v,mores<double>);
@@ -386,6 +419,12 @@ int main(){
 	test (x, lesser<double>);
 	w=mergesort(v,mores<double>);
 	x=mergesort(v,lesser<double>);
+	test (w, mores<double>);
+	test (x, lesser<double>);
+	w=v;
+	x=v;
+	heapSort(w,mores<double>, lesser<double>);
+	heapSort(x,lesser<double>, mores<double>);
 	test (w, mores<double>);
 	test (x, lesser<double>);
 	return 0;

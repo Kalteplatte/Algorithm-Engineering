@@ -19,9 +19,10 @@ double N_INF=-0.01; //gloabal variable, which indicates that this point is part 
 //This void changes the paths from start to every other point, so that (if there exists a connection) in the end the shortest path from start to every connected point is shown.
 template <typename T>
 void newPaths(vector<vector<T>>& graph, int start){
-	for (int i=0;i<graph.size();i++){
+	int size=graph.size();
+	for (int i=0;i<size;i++){
 		if(graph[start][i]!=NO){    //Check if you need the path from i to other points. If start and i are not connected then ignore 
-			for (int j=0;j<graph.size();j++){
+			for (int j=0;j<size;j++){
 				if(graph[i][j]!=NO){										                 //
 					if(graph[start][j]>graph[i][j]+graph[start][i] || graph[start][j]==NO){  //together in one if? Don't know how to say (maybe if(graph[i][j]!=NULL && (graph[start][j]<graph[i][j] || graph[start][j]==NULL)) ?)
 						graph[start][j]=graph[i][j]+graph[start][i];
@@ -36,28 +37,22 @@ void newPaths(vector<vector<T>>& graph, int start){
 //Nothing special, just uses newPaths on the whole graph
 template <typename T>
 void newGraph(vector<vector<T>>& graph){
-	for (int i=0; i<graph.size();i++) newPaths(graph,i);
+	int size=graph.size();
+	for (int i=0; i<size;i++) newPaths(graph,i);
 }
 
 
-/*template <typename T>
-void newGraph(vector<vector<T>>& graph){
 
-
-}
-*/
-
+//if start has the value -INF, this function changes every successive point to -INF
 template <typename T>
 void makeInf(vector<vector<T>>& graph,int start){
 	if (graph[start][start]!=N_INF) return;
-	for (int j=0;j<graph.size();j++){
+	int size=graph.size();
+	for (int j=0;j<size;j++){
 		if (graph[start][j]!=NO){
 			graph[start][j]=N_INF;
 		} 
 	}
-	
-
-
 }
 
 //This Algo checks if there exists a negative cycle in the graph, by adding the path from a point i to a point j and then backwards.
@@ -65,8 +60,9 @@ void makeInf(vector<vector<T>>& graph,int start){
 template <typename T>
 bool checkNeg(vector<vector<T>>& graph){
 	bool info=1;
-	for (int i=0;i<graph.size();i++){
-		for (int j=0;j<graph.size();j++){
+	int size=graph.size();
+	for (int i=0;i<size;i++){
+		for (int j=0;j<size;j++){
 			if (graph[i][j]!=NO && graph[j][i]!=NO){
 				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==N_INF || graph[i][j]==N_INF){
 					info=0;
@@ -82,9 +78,9 @@ bool checkNeg(vector<vector<T>>& graph){
 //simple Algorithm to show the matrix graph in a proper format
 template <typename T>
 void Output(vector<vector<T>> graph){ 
-	int j=graph.size();
-	for (int i=0;i<j;i++){
-		for (int k=0;k<j;k++){
+	int size=graph.size();
+	for (int i=0;i<size;i++){
+		for (int k=0;k<size;k++){
 			if (graph[i][k]==NO) printf("%5s ","N");
 			else if (graph[i][k]==N_INF) printf ("%5s ", "-INF");
 			else	printf("%5.0f ",graph[i][k]);
@@ -128,7 +124,7 @@ int main(){
 			if (k==i) graph[i][k]=0;
 			else if ((rand()%100)<=20) {
 				int r=rand()%100;
-				r=r-50;
+				r=r-10;
 				graph[i][k]=r;
 			}
 		}

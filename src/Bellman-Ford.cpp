@@ -10,6 +10,7 @@ using namespace std;
 //TODO
 //complexity+space
 double NO=0.01; //global variable that indicates "no connection"
+double N_INF=-0.01;
 
 //checks if the given matrix represents a graph <=> matrix is square and the elements at the diagonal are 0
 //necessary? (Con: additional time for computing, especially because we go along the matrix col-wise and row-wise => bad for cache)
@@ -40,28 +41,55 @@ void newPaths(vector<vector<T>>& graph, int start){
 
 }
 
+//Nothing special, just uses newPaths on the whole graph
+template <typename T>
+void newGraph(vector<vector<T>>& graph){
+	for (int i=0; i<graph.size();i++) newPaths(graph,i);
+}
+
 
 /*template <typename T>
 void newGraph(vector<vector<T>>& graph){
 
 
 }
-
+*/
 
 template <typename T>
-void checkNeg(vector<vector<T>>& graph){
-	char info="Es existiert kein negativer Zyklus.";
-	for (int i=0;i<graph.size;i++){
+void makeInf(vector<vector<T>>& graph,int start){
+	if (graph[start][start]!=N_INF) return;
+	for (int i=0;i<graph.size();i++){
 		for (int j=0;j<graph.size();j++){
-			graph[i][i]=graph[i][j]+graph[j][i];
-			if(graph[i][i]<0){
-				info="Es existiert ein negativer Zyklus."  
-					//TODO
-					//break? if yes change if-question (less running time for writing graph[i][i]); else change every point connected to i (including i) to number indicating the negative infinity (maybe NULL)
+			if (graph[i][j]!=NO && graph[j][i]!=NO){
+				graph[i][j]=N_INF;
+				graph[j][i]=N_INF;
+				graph[j][j]=N_INF;
 			}
 		}
 	}
-}*/
+
+
+}
+
+//This Algo checks if there exists a negative cycle in the graph, by adding the path from a point i to a point j and then backwards.
+template <typename T>
+bool checkNeg(vector<vector<T>>& graph){
+	bool info=1;
+	for (int i=0;i<graph.size();i++){
+		for (int j=0;j<graph.size();j++){
+			if (graph[i][j]!=NO && graph[j][i]!=NO){
+				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==N_INF || graph[i][j]==N_INF){
+					info=0;
+					graph[i][i]=N_INF;
+					makeInf(graph,i);
+					//TODO
+					//break? if yes change if-question (less running time for writing graph[i][i]); else change every point connected to i (including i) to number indicating the negative infinity (maybe NULL)
+				}
+			}
+		}
+	}
+	return info;
+}
 
 //simple Algorithm to show the matrix graph in a proper format
 template <typename T>
@@ -70,7 +98,8 @@ void Output(vector<vector<T>> graph){
 	for (int i=0;i<j;i++){
 		for (int k=0;k<j;k++){
 			if (graph[i][k]==NO) printf("%5s ","N");
-			else printf("%5.0f ",graph[i][k]);
+			else if (graph[i][k]==N_INF) printf ("%s ", "-INF");
+			else	printf("%5.0f ",graph[i][k]);
 		}
 		printf("\n");
 	}
@@ -82,12 +111,12 @@ int main(){
 
 	//testing purposes
 	vector <vector<double>> graph; 
-	int V = 3;
+	int V = 5;
 	graph.resize(V,vector<double>(V,NO));
 	for (int i=0;i<V;i++){
 		for (int k=0;k<V;k++){
 			if (k==i) graph[i][k]=0;
-			else if ((rand()%100)<=80) {
+			else if ((rand()%100)<=20) {
 				int r=rand()%100;
 				r=r-50;
 				graph[i][k]=r;
@@ -95,7 +124,10 @@ int main(){
 		}
 	};
 	Output(graph);
-	newPaths(graph,0);
+	newGraph(graph);
+	Output(graph);
+	bool info=checkNeg(graph);
+	printf("%d\n",info);
 	Output(graph);
 	return 0;
 }

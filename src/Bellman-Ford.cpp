@@ -136,6 +136,28 @@ CSR createCSR(vector<vector<double>> graph){
 	return matrix;
 }
 
+
+//changes a CSR-matrix into a normal matrix
+//in this case we assume a square-matrix
+vector <vector<double>> createNormal(CSR matrix){
+	vector <vector<double>> normal;
+	int size=matrix.row_idx.size();
+	normal.resize(size,vector<double>(size,NO));
+	for (int i=0;i<size;i++){
+		if (i==size-1){ 
+			for (int j=matrix.row_idx[i];j<matrix.value.size();j++){
+				normal[i][matrix.col_idx[j]]=matrix.value[j];
+			}
+		}
+		else {
+			for (int j=matrix.row_idx[i];j<matrix.row_idx[i+1];j++){
+				normal[i][matrix.col_idx[j]]=matrix.value[j];
+			}
+		}
+	}
+	return normal;
+}
+
 //generates Output of a CSR matrix in it's  own form
 void OutputCSR(CSR matrix){
 	for (int i=0;i<matrix.value.size();i++) printf("%5.0f",matrix.value[i]);
@@ -143,7 +165,7 @@ void OutputCSR(CSR matrix){
 	for (int i=0;i<matrix.col_idx.size();i++) printf("%5d",matrix.col_idx[i]);
 	printf("\n");
 	for (int i=0;i<matrix.row_idx.size();i++) printf("%5d",matrix.row_idx[i]);
-	printf("\n");
+	printf("\n\n\n");
 
 }
 
@@ -167,5 +189,7 @@ int main(){
 	CSR matrix=createCSR(graph);
 	Output(graph);
 	OutputCSR(matrix);
+	graph=createNormal(matrix);
+	Output(graph);
 	return 0;
 }

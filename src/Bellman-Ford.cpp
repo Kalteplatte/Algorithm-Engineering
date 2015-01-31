@@ -10,11 +10,17 @@
 using namespace std;
 //TODO
 //complexity+space
-
+//CSR
 
 double NO=0.01; //global variable, which indicates "no connection"
 double N_INF=-0.01; //gloabal variable, which indicates that this point is part of a negative cycle
 
+
+struct CSR{
+	vector<double> value;
+	vector<int> row_idx;
+	vector<int> col_idx;
+};
 
 //This void changes the paths from start to every other point, so that (if there exists a connection) in the end the shortest path from start to every connected point is shown.
 template <typename T>
@@ -111,13 +117,42 @@ void test(vector<vector<T>> graph){
 	}
 }
 
+//changes a normal matrix into a CSR-Matrix
+//note that it's not necessary to check if one row of the original mtraix is empty, because the elements on the diagonal are never empty.
+CSR createCSR(vector<vector<double>> graph){
+	CSR matrix;
+	int old_i=0;
+	for (int i=0;i<graph.size();i++){
+		for (int k=0;k<graph.size();k++){
+			if (graph[i][k]!=NO) {
+				matrix.value.push_back(graph[i][k]);
+				matrix.col_idx.push_back(k);
+				if(matrix.row_idx.size()==0) matrix.row_idx.push_back(0);
+				else if(old_i!=i) matrix.row_idx.push_back(matrix.value.size()-1);
+				old_i=i;
+			}
+		}
+	}
+	return matrix;
+}
+
+//generates Output of a CSR matrix in it's  own form
+void OutputCSR(CSR matrix){
+	for (int i=0;i<matrix.value.size();i++) printf("%5.0f",matrix.value[i]);
+	printf("\n");
+	for (int i=0;i<matrix.col_idx.size();i++) printf("%5d",matrix.col_idx[i]);
+	printf("\n");
+	for (int i=0;i<matrix.row_idx.size();i++) printf("%5d",matrix.row_idx[i]);
+	printf("\n");
+
+}
 
 
 int main(){
 
 	//testing purposes
 	vector <vector<double>> graph; 
-	int V = 10;
+	int V = 5;
 	graph.resize(V,vector<double>(V,NO));
 	for (int i=0;i<V;i++){
 		for (int k=0;k<V;k++){
@@ -129,5 +164,8 @@ int main(){
 			}
 		}
 	}
-	All(graph);
+	CSR matrix=createCSR(graph);
+	Output(graph);
+	OutputCSR(matrix);
+	return 0;
 }

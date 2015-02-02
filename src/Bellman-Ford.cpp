@@ -6,14 +6,18 @@
 #include <vector>
 #include <stdio.h>
 #include <assert.h>
+#include <limits>
+
 
 using namespace std;
 //TODO
 //complexity+space
 //CSR
 
-double NO=0.01; //global variable, which indicates "no connection"
-double N_INF=-0.01; //gloabal variable, which indicates that this point is part of a negative cycle
+double NO=std::numeric_limits<double>::quiet_NaN(); //global variable, which indicates "no connection"
+//Note that the check for NaN is different in VS and other compilers. So here we will check i==i, which returns false if i=NaN
+
+double N_INF=-std::numeric_limits<double>::infinity(); //gloabal variable, which indicates that this point is part of a negative cycle
 
 
 struct CSR{
@@ -27,10 +31,10 @@ template <typename T>
 void newPaths(vector<vector<T>>& graph, int start){
 	int size=graph.size();
 	for (int i=0;i<size;i++){
-		if(graph[start][i]!=NO){    //Check if you need the path from i to other points. If start and i are not connected then ignore 
+		if(graph[start][i]==graph[start][i]){    //Check if you need the path from i to other points. If start and i are not connected then ignore 
 			for (int j=0;j<size;j++){
-				if(graph[i][j]!=NO){										                 //
-					if(graph[start][j]>graph[i][j]+graph[start][i] || graph[start][j]==NO){  //together in one if? Don't know how to say (maybe if(graph[i][j]!=NULL && (graph[start][j]<graph[i][j] || graph[start][j]==NULL)) ?)
+				if(graph[i][j]==graph[i][j]){										                 //
+					if(graph[start][j]>graph[i][j]+graph[start][i] || graph[start][j]!=graph[start][j]){  //together in one if? Don't know how to say (maybe if(graph[i][j]!=NULL && (graph[start][j]<graph[i][j] || graph[start][j]==NULL)) ?)
 						graph[start][j]=graph[i][j]+graph[start][i];
 					}
 				}
@@ -55,7 +59,7 @@ void makeInf(vector<vector<T>>& graph,int start){
 	if (graph[start][start]!=N_INF) return;
 	int size=graph.size();
 	for (int j=0;j<size;j++){
-		if (graph[start][j]!=NO){
+		if (graph[start][j]==graph[start][j]){
 			graph[start][j]=N_INF;
 		} 
 	}
@@ -69,7 +73,7 @@ bool checkNeg(vector<vector<T>>& graph){
 	int size=graph.size();
 	for (int i=0;i<size;i++){
 		for (int j=0;j<size;j++){
-			if (graph[i][j]!=NO && graph[j][i]!=NO){
+			if (graph[i][j]==graph[i][j] && graph[j][i]==graph[j][i]){
 				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==N_INF || graph[i][j]==N_INF){
 					info=0;
 					graph[i][i]=N_INF;
@@ -87,7 +91,7 @@ void Output(vector<vector<T>> graph){
 	int size=graph.size();
 	for (int i=0;i<size;i++){
 		for (int k=0;k<size;k++){
-			if (graph[i][k]==NO) printf("%5s ","N");
+			if (graph[i][k]!=graph[i][k]) printf("%5s ","N");
 			else if (graph[i][k]==N_INF) printf ("%5s ", "-INF");
 			else	printf("%5.0f ",graph[i][k]);
 		}
@@ -112,7 +116,7 @@ template <typename T>
 void test(vector<vector<T>> graph){
 	for (int i=0;i<graph.size();i++){
 		for (int k=0;k<graph.size();k++){
-			if (graph[i][i]==N_INF) assert(graph[i][k]==N_INF || graph[i][k]==NO);
+			if (graph[i][i]==N_INF) assert(graph[i][k]==N_INF || graph[i][k]!=graph[i][k]);
 		}
 	}
 }
@@ -124,7 +128,7 @@ CSR createCSR(vector<vector<double>> graph){
 	int old_i=0;
 	for (int i=0;i<graph.size();i++){
 		for (int k=0;k<graph.size();k++){
-			if (graph[i][k]!=NO) {
+			if (graph[i][k]==graph[i][k]) {
 				matrix.value.push_back(graph[i][k]);
 				matrix.col_idx.push_back(k);
 				if(matrix.row_idx.size()==0) matrix.row_idx.push_back(0);

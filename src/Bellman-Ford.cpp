@@ -27,8 +27,7 @@ struct CSR{
 };
 
 //This void changes the paths from start to every other point, so that (if there exists a connection) in the end the shortest path from start to every connected point is shown.
-template <typename T>
-void newPaths(vector<vector<T>>& graph, int start){
+void newPaths(vector<vector<double>>& graph, int start){
 	int size=graph.size();
 	for (int i=0;i<size;i++){
 		if(graph[start][i]==graph[start][i]){    //Check if you need the path from i to other points. If start and i are not connected then ignore 
@@ -45,8 +44,7 @@ void newPaths(vector<vector<T>>& graph, int start){
 }
 
 //Nothing special, just uses newPaths on the whole graph
-template <typename T>
-void newGraph(vector<vector<T>>& graph){
+void newGraph(vector<vector<double>>& graph){
 	int size=graph.size();
 	for (int i=0; i<size;i++) newPaths(graph,i);
 }
@@ -54,8 +52,7 @@ void newGraph(vector<vector<T>>& graph){
 
 
 //if start has the value -INF, this function changes every successive point to -INF
-template <typename T>
-void makeInf(vector<vector<T>>& graph,int start){
+void makeInf(vector<vector<double>>& graph,int start){
 	if (graph[start][start]!=N_INF) return;
 	int size=graph.size();
 	for (int j=0;j<size;j++){
@@ -67,8 +64,7 @@ void makeInf(vector<vector<T>>& graph,int start){
 
 //This Algo checks if there exists a negative cycle in the graph, by adding the path from a point i to a point j and then backwards.
 //In addition it changes (with makeInf() ) all related points to -INF)
-template <typename T>
-bool checkNeg(vector<vector<T>>& graph){
+bool checkNeg(vector<vector<double>>& graph){
 	bool info=1;
 	int size=graph.size();
 	for (int i=0;i<size;i++){
@@ -86,8 +82,7 @@ bool checkNeg(vector<vector<T>>& graph){
 }
 
 //simple Algorithm to show the matrix graph in a proper format
-template <typename T>
-void Output(vector<vector<T>> graph){ 
+void Output(vector<vector<double>> graph){ 
 	int size=graph.size();
 	for (int i=0;i<size;i++){
 		for (int k=0;k<size;k++){
@@ -101,8 +96,7 @@ void Output(vector<vector<T>> graph){
 }
 
 //simply use all the functions together
-template <typename T>
-void All(vector<vector<T>>& graph){
+void All(vector<vector<double>>& graph){
 	Output(graph);
 	newGraph(graph);
 	Output(graph);
@@ -112,8 +106,7 @@ void All(vector<vector<T>>& graph){
 }
 
 //tests if all -INF's have -INF as successor
-template <typename T>
-void test(vector<vector<T>> graph){
+void test(vector<vector<double>> graph){
 	for (int i=0;i<graph.size();i++){
 		for (int k=0;k<graph.size();k++){
 			if (graph[i][i]==N_INF) assert(graph[i][k]==N_INF || graph[i][k]!=graph[i][k]);

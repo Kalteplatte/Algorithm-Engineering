@@ -3,28 +3,20 @@
 //Note that the given matrix will be handled as if it's directed and has only zeroes on the diagonal. Certain values will tell us that there is no direct connection between two points. (see below)
 //In the beginning every point has the distance 0 to itself, therefore the diagonal is zero.
 //Due to the fact of the negative weights, the zeroes on the diagonal may change to negative numbers in the algorithm. In this case we have at least one negative cycle inside the graph.
+
+//Note that the check for NaN is different in VS and other compilers. So here we will check i==i, which returns false if i=NaN
+
 #include <vector>
 #include <stdio.h>
 #include <assert.h>
 #include <limits>
-
+#include "Bellman.h"
 
 using namespace std;
 //TODO
 //complexity+space
 //CSR
 
-double NO=std::numeric_limits<double>::quiet_NaN(); //global variable, which indicates "no connection"
-//Note that the check for NaN is different in VS and other compilers. So here we will check i==i, which returns false if i=NaN
-
-double N_INF=-std::numeric_limits<double>::infinity(); //gloabal variable, which indicates that this point is part of a negative cycle
-
-
-struct CSR{
-	vector<double> value;
-	vector<int> row_idx;
-	vector<int> col_idx;
-};
 
 //This void changes the paths from start to every other point, so that (if there exists a connection) in the end the shortest path from start to every connected point is shown.
 void newPaths(vector<vector<double>>& graph, int start){
@@ -53,11 +45,11 @@ void newGraph(vector<vector<double>>& graph){
 
 //if start has the value -INF, this function changes every successive point to -INF
 void makeInf(vector<vector<double>>& graph,int start){
-	if (graph[start][start]!=N_INF) return;
+	if (graph[start][start]!=-std::numeric_limits<double>::infinity()) return;
 	int size=graph.size();
 	for (int j=0;j<size;j++){
 		if (graph[start][j]==graph[start][j]){
-			graph[start][j]=N_INF;
+			graph[start][j]=-std::numeric_limits<double>::infinity();
 		} 
 	}
 }
@@ -70,9 +62,9 @@ bool checkNeg(vector<vector<double>>& graph){
 	for (int i=0;i<size;i++){
 		for (int j=0;j<size;j++){
 			if (graph[i][j]==graph[i][j] && graph[j][i]==graph[j][i]){
-				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==N_INF || graph[i][j]==N_INF){
+				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==-std::numeric_limits<double>::infinity() || graph[i][j]==-std::numeric_limits<double>::infinity()){
 					info=0;
-					graph[i][i]=N_INF;
+					graph[i][i]=-std::numeric_limits<double>::infinity();
 					makeInf(graph,i);
 				}
 			}
@@ -87,7 +79,7 @@ void Output(vector<vector<double>> graph){
 	for (int i=0;i<size;i++){
 		for (int k=0;k<size;k++){
 			if (graph[i][k]!=graph[i][k]) printf("%5s ","N");
-			else if (graph[i][k]==N_INF) printf ("%5s ", "-INF");
+			else if (graph[i][k]==-std::numeric_limits<double>::infinity()) printf ("%5s ", "-INF");
 			else	printf("%5.0f ",graph[i][k]);
 		}
 		printf("\n");
@@ -109,7 +101,7 @@ void All(vector<vector<double>>& graph){
 void test(vector<vector<double>> graph){
 	for (int i=0;i<graph.size();i++){
 		for (int k=0;k<graph.size();k++){
-			if (graph[i][i]==N_INF) assert(graph[i][k]==N_INF || graph[i][k]!=graph[i][k]);
+			if (graph[i][i]==-std::numeric_limits<double>::infinity()) assert(graph[i][k]==-std::numeric_limits<double>::infinity() || graph[i][k]!=graph[i][k]);
 		}
 	}
 }
@@ -139,7 +131,7 @@ CSR createCSR(vector<vector<double>> graph){
 vector <vector<double>> createNormal(CSR matrix){
 	vector <vector<double>> normal;
 	int size=matrix.row_idx.size();
-	normal.resize(size,vector<double>(size,NO));
+	normal.resize(size,vector<double>(size,std::numeric_limits<double>::quiet_NaN()));
 	for (int i=0;i<size;i++){
 		if (i==size-1){ 
 			for (int j=matrix.row_idx[i];j<matrix.value.size();j++){
@@ -167,26 +159,7 @@ void OutputCSR(CSR matrix){
 }
 
 
-int main(){
+/*int main(){
 
-	//testing purposes
-	vector <vector<double>> graph; 
-	int V = 5;
-	graph.resize(V,vector<double>(V,NO));
-	for (int i=0;i<V;i++){
-		for (int k=0;k<V;k++){
-			if (k==i) graph[i][k]=0;
-			else if ((rand()%100)<=20) {
-				int r=rand()%100;
-				r=r-10;
-				graph[i][k]=r;
-			}
-		}
-	}
-	CSR matrix=createCSR(graph);
-	Output(graph);
-	OutputCSR(matrix);
-	graph=createNormal(matrix);
-	Output(graph);
 	return 0;
-}
+}*/

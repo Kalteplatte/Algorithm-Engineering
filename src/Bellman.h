@@ -34,4 +34,8 @@ vector <vector<double>> createNormal(CSR);
 
 void OutputCSR(CSR);
 
+void newPathsCSR(CSR&,int);
+
+void newGraphCSR(CSR&);
+
 #endif

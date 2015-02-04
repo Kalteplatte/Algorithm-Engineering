@@ -84,7 +84,7 @@ void Output(vector<vector<double>> graph){
 		}
 		printf("\n");
 	}
-	printf("\n \n");
+	printf("\n\n\n");
 }
 
 //simply use all the functions together
@@ -115,9 +115,9 @@ CSR createCSR(vector<vector<double>> graph){
 		for (int k=0;k<graph.size();k++){
 			if (graph[i][k]==graph[i][k]) {
 				matrix.value.push_back(graph[i][k]);
-				matrix.col_idx.push_back(k);
-				if(matrix.row_idx.size()==0) matrix.row_idx.push_back(0);
-				else if(old_i!=i) matrix.row_idx.push_back(matrix.value.size()-1);
+				matrix.row_idx.push_back(k);
+				if(matrix.col_idx.size()==0) matrix.col_idx.push_back(0);
+				else if(old_i!=i) matrix.col_idx.push_back(matrix.value.size()-1);
 				old_i=i;
 			}
 		}
@@ -130,17 +130,17 @@ CSR createCSR(vector<vector<double>> graph){
 //in this case we assume a square-matrix
 vector <vector<double>> createNormal(CSR matrix){
 	vector <vector<double>> normal;
-	int size=matrix.row_idx.size();
+	int size=matrix.col_idx.size();
 	normal.resize(size,vector<double>(size,std::numeric_limits<double>::quiet_NaN()));
 	for (int i=0;i<size;i++){
 		if (i==size-1){ 
-			for (int j=matrix.row_idx[i];j<matrix.value.size();j++){
-				normal[i][matrix.col_idx[j]]=matrix.value[j];
+			for (int j=matrix.col_idx[i];j<matrix.value.size();j++){
+				normal[i][matrix.row_idx[j]]=matrix.value[j];
 			}
 		}
 		else {
-			for (int j=matrix.row_idx[i];j<matrix.row_idx[i+1];j++){
-				normal[i][matrix.col_idx[j]]=matrix.value[j];
+			for (int j=matrix.col_idx[i];j<matrix.col_idx[i+1];j++){
+				normal[i][matrix.row_idx[j]]=matrix.value[j];
 			}
 		}
 	}
@@ -151,11 +151,65 @@ vector <vector<double>> createNormal(CSR matrix){
 void OutputCSR(CSR matrix){
 	for (int i=0;i<matrix.value.size();i++) printf("%5.0f",matrix.value[i]);
 	printf("\n");
-	for (int i=0;i<matrix.col_idx.size();i++) printf("%5d",matrix.col_idx[i]);
-	printf("\n");
 	for (int i=0;i<matrix.row_idx.size();i++) printf("%5d",matrix.row_idx[i]);
+	printf("\n");
+	for (int i=0;i<matrix.col_idx.size();i++) printf("%5d",matrix.col_idx[i]);
 	printf("\n\n\n");
 
+}
+
+//checks a CSR-matrix if start reaches end directly, if yes changes idx to that index
+//if not changes idx to the index where this path belongs
+bool XreachesY(int start,int end,int& idx,CSR graph){
+	int size=graph.col_idx.size();
+	int ending = graph.row_idx.size();
+	if (start<size-1) ending=graph.col_idx[start+1];
+	idx=graph.col_idx[start];
+	for (int ptr=graph.col_idx[start]; ptr<ending; ptr++){
+		int test=graph.row_idx[ptr];
+		if (test<end) idx=ptr;													//in case there's no connection: we set idx
+		if (graph.row_idx[ptr]==end){
+			idx=ptr;
+			return true;
+		}
+	}
+	return false;
+}
+
+//newPaths for CSR
+void newPathsCSR(CSR& graph, int start){
+	int size=graph.col_idx.size();
+	int ending1=graph.row_idx.size();
+	if (start<size-1) ending1=graph.col_idx[start+1];
+
+	for (int next_point=graph.col_idx[start];next_point<ending1; next_point++){    //check every point, which is reachable from start
+		int ending2=graph.row_idx.size();
+		if (graph.row_idx[next_point]<size-1) ending2=graph.col_idx[graph.row_idx[next_point]+1];
+
+		for(int ptr = graph.col_idx[graph.row_idx[next_point]]; ptr<ending2; ptr++){    //check every point, which is reachable from next_point
+			int end=graph.row_idx[ptr];
+			int idx=0;
+			double sum=graph.value[next_point] + graph.value[ptr];   //sum = path from start to next_point + path from next_point to end
+			if (XreachesY(start,end,idx,graph)){
+				if (graph.value[idx]>sum) graph.value[idx]=sum;
+			}else {
+				for (int i=start+1;i<size;i++) graph.col_idx[i]++;
+				++ending2;
+				++ending1;
+				if(idx<next_point) ++next_point;	
+				graph.row_idx.insert(graph.row_idx.begin()+idx,end);
+				graph.value.insert(graph.value.begin()+idx,sum);
+			}
+		}
+	}
+}
+
+
+
+//newGraph for CSR
+void newGraphCSR(CSR& graph){
+	int size=graph.col_idx.size();
+	for (int i=0;i<size;i++) newPathsCSR(graph,i);
 }
 
 

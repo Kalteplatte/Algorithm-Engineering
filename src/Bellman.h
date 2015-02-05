@@ -10,15 +10,15 @@ using namespace std;
 
 struct CSR{
 	vector<double> value;
-	vector<int> row_idx;
-	vector<int> col_idx;
+	vector<unsigned long> row_idx;
+	vector<unsigned long> col_idx;
 };
 
-void newPaths(vector<vector<double>>&, int);
+void newPaths(vector<vector<double>>&, unsigned long);
 
 void newGraph(vector<vector<double>>&);
 
-void makeInf(vector<vector<double>>&,int);
+void makeInf(vector<vector<double>>&,unsigned long);
 
 bool checkNeg(vector<vector<double>>&);
 
@@ -30,7 +30,7 @@ vector <vector<double>> createNormal(CSR);
 
 void OutputCSR(CSR);
 
-void newPathsCSR(CSR&,int);
+void newPathsCSR(CSR&,unsigned long);
 
 void newGraphCSR(CSR&);
 
@@ -38,7 +38,7 @@ void newGraphCSR(CSR&);
 
 void newGraphCSR2(CSR&);
 
-void makeInfCSR(CSR&,int,int);
+void makeInfCSR(CSR&,unsigned long,unsigned long);
 
 bool checkNegCSR(CSR&);
 

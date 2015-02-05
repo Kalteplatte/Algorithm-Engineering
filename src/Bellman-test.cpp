@@ -18,11 +18,11 @@ void testmutate1(CSR graph){
 	assert(graph.value.size()==graph2.value.size());
 	assert(graph.col_idx.size()==graph2.col_idx.size());
 	assert(graph.row_idx.size()==graph2.row_idx.size());
-	for (int i=0;i<graph.value.size();i++){
+	for (unsigned long i=0;i<graph.value.size();i++){
 		assert(graph.value[i]==graph2.value[i]);
 		assert(graph.row_idx[i]==graph2.row_idx[i]);
 	}
-	for (int i=0;i<graph.col_idx.size();i++){
+	for (unsigned long i=0;i<graph.col_idx.size();i++){
 		assert(graph.col_idx[i]==graph2.col_idx[i]);
 	}
 
@@ -36,9 +36,9 @@ void testmutate2(vector <vector<double>> matrix){
 	
 	assert(matrix.size()==matrix2.size());
 	assert(matrix[0].size()==matrix[2].size());
-	int size = matrix.size();
-	for (int i=0;i<size;i++){
-		for (int j=0; j<size;j++){
+	unsigned long size = matrix.size();
+	for (unsigned long i=0;i<size;i++){
+		for (unsigned long j=0; j<size;j++){
 			if (matrix[i][j]==matrix[i][j]) assert(matrix[i][j]==matrix2[i][j]);
 			else assert(matrix2[i][j]!=matrix2[i][j]);
 		}
@@ -46,16 +46,16 @@ void testmutate2(vector <vector<double>> matrix){
 }
 
 void testpath(vector <vector<double>> matrix){
-	int size=matrix.size();
-	for (int i=0;i<size;i++){
-		for (int j=0; j<size;j++){
+	unsigned long size=matrix.size();
+	for (unsigned long i=0;i<size;i++){
+		for (unsigned long j=0; j<size;j++){
 			if(matrix[i][j]==matrix[i][j] && matrix[j][i]==matrix[j][i]) assert(matrix[i][i]<=matrix[i][j]+matrix[j][i]);
 		    if(matrix[i][i]==-std::numeric_limits<double>::infinity() && matrix[i][j]==matrix[i][j]) assert(matrix[i][j]==-std::numeric_limits<double>::infinity());
 		}
 	}
 }
 
-vector <vector<double>> createGraph(int dimension){
+vector <vector<double>> createGraph(unsigned long dimension){
 	//srand (time(NULL));
 	int quote1=rand()%100;
 	int quote2=rand()%100;
@@ -64,11 +64,11 @@ vector <vector<double>> createGraph(int dimension){
 	graph.resize(dimension,vector<double>(dimension,std::numeric_limits<double>::quiet_NaN()));
 	
 
-	for (int i=0;i<dimension;i++){
-		for (int k=0;k<dimension;k++){
+	for (unsigned long i=0;i<dimension;i++){
+		for (unsigned long k=0;k<dimension;k++){
 			if (k==i) graph[i][k]=0;
 			else if ((rand()%100)<=quote1) {
-				int r=rand()%100;
+				unsigned long r=rand()%100;
 				r=r-quote2;
 				graph[i][k]=r;
 			}
@@ -97,8 +97,8 @@ int main(){
 
 	//testing purposes
 	/*vector <vector<double>> graph; 
-	int V = 100;
-	for (int i=0; i <100; i++){
+	unsigned long V = 100;
+	for (unsigned long i=0; i <100; i++){
 		graph=createGraph(V);
 		CSR matrix=createCSR(graph);
 		testmutate1(matrix);
@@ -109,8 +109,8 @@ int main(){
 
 	vector <vector<double>> graph;
 	double sum=0;
-	int dimension=10000;
-	for (int i=0; i<5;i++){
+	unsigned long dimension=1000;
+	for (unsigned long i=0; i<5;i++){
 		graph=createGraph(dimension);
 		sum=sum+MeasureTime(graph);
 	}

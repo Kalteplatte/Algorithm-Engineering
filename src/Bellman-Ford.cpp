@@ -272,6 +272,28 @@ void AllCSR2(CSR& graph){
 	checkNegCSR(graph);
 }
 
+void AllOpt(vector <vector<double>>& graph){
+	CSR matrix=createCSR(graph);
+	int size = matrix.col_idx.size();
+	int critical_length= size / 10;   //further testing needed
+	bool test = true;
+	for (int i=0; i<size; i++){
+		if(test){ 
+			newPathsCSR(matrix,i);
+			if ((matrix.value.size()/ size) >= critical_length){
+				graph=createNormal(matrix);
+				test=false;
+			}
+		}else newPaths(graph,i);
+	}
+	if (test) {
+		checkNegCSR(matrix);
+		graph=createNormal(matrix);
+	}else checkNeg(graph);
+}
+	
+
+
 /*int main(){
 
 	return 0;

@@ -48,5 +48,6 @@ void AllCSR(CSR&);
 
 void AllCSR2(CSR&);
 
+void AllOpt(vector <vector<double>>&);
 
 #endif

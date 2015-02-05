@@ -56,7 +56,7 @@ void testpath(vector <vector<double>> matrix){
 }
 
 vector <vector<double>> createGraph(int dimension){
-	srand (time(NULL));
+	//srand (time(NULL));
 	int quote1=rand()%100;
 	int quote2=rand()%100;
 	
@@ -77,10 +77,10 @@ vector <vector<double>> createGraph(int dimension){
 	return graph;
 }
 	
-double MeasureTime(CSR graph){  //Measures the time of a function in microseconds, 
+double MeasureTime(vector <vector<double>> graph){  //Measures the time of a function in microseconds, 
 	auto start = chrono::high_resolution_clock::now();
 
-	AllCSR2(graph);  
+	AllOpt(graph);  
 
 	auto stop = chrono::high_resolution_clock::now();
 
@@ -111,10 +111,9 @@ int main(){
 	double sum=0;
 	int dimension=10000;
 	for (int i=0; i<5;i++){
-		createGraph(dimension);
-		CSR matrix=createCSR(graph);
-		sum=sum+MeasureTime(matrix);
+		graph=createGraph(dimension);
+		sum=sum+MeasureTime(graph);
 	}
-	printf("%f",sum);
+	printf("%f",sum/5);
 	return 0;
 }

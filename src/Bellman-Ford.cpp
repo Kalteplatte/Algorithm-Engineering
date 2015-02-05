@@ -194,12 +194,32 @@ void newPathsCSR(CSR& graph, int start){
 }
 
 
-
 //newGraph for CSR
 void newGraphCSR(CSR& graph){
 	int size=graph.col_idx.size();
 	for (int i=0;i<size;i++) newPathsCSR(graph,i);
 }
+
+
+
+//newGraph for CSR, which, if too many paths exist, will change the CSR to a matrix.
+void newGraphCSR2(CSR& graph){
+	int size=graph.col_idx.size();
+	int critical_length = size / 10 ;     //at this point we will change the function to newGraph()
+	for (int i=0;i<size;i++) {
+		newPathsCSR(graph,i);
+		if ((graph.value.size()/ size) >= critical_length){
+			vector <vector<double>> matrix;
+			matrix = createNormal(graph);
+			for (int j=i;j<size;j++) newPaths(matrix,j);
+			graph=createCSR(matrix);
+			return;
+		}
+	}
+}
+
+
+
 
 //if start has the value -INF, this function changes every successive point to -INF
 void makeInfCSR(CSR& graph,int start,int self_path){

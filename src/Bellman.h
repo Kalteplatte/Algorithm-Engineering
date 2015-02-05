@@ -34,4 +34,10 @@ void newPathsCSR(CSR&,int);
 
 void newGraphCSR(CSR&);
 
+void newGraphCSR(CSR&);
+
+void makeInfCSR(CSR&,int,int);
+
+bool checkNegCSR(CSR&);
+
 #endif

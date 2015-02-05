@@ -202,28 +202,34 @@ void newGraphCSR(CSR& graph){
 }
 
 //if start has the value -INF, this function changes every successive point to -INF
-void makeInfCSR(CSR& graph,int start){
-	if (graph[start][start]!=-std::numeric_limits<double>::infinity()) return;
-	int size=graph.size();
-	for (int j=0;j<size;j++){
-		if (graph[start][j]==graph[start][j]){
-			graph[start][j]=-std::numeric_limits<double>::infinity();
-		} 
+void makeInfCSR(CSR& graph,int start,int self_path){
+	if (graph.value[self_path]!=-std::numeric_limits<double>::infinity()) return;
+	int size=graph.col_idx.size();
+	int ending=graph.row_idx.size();
+	if(start<size-1) ending=graph.col_idx[start+1];
+	for (int j=graph.col_idx[start];j<ending;j++){
+		graph.value[j]=-std::numeric_limits<double>::infinity();
 	}
 }
 
 //This Algo checks if there exists a negative cycle in the graph, by adding the path from a point i to a point j and then backwards. This includes graph[start][start].
 //In addition it changes (with makeInf() ) all related points to -INF)
-bool checkNeg(vector<vector<double>>& graph){
+bool checkNegCSR(CSR& graph){
 	bool info=false;
-	int size=graph.size();
+	int size=graph.col_idx.size();
 	for (int i=0;i<size;i++){
-		for (int j=0;j<size;j++){
-			if (graph[i][j]==graph[i][j] && graph[j][i]==graph[j][i]){
-				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==-std::numeric_limits<double>::infinity() || graph[i][j]==-std::numeric_limits<double>::infinity()){
+		int ending=graph.row_idx.size();
+		if(i<size-1) ending=graph.col_idx[i+1];
+		for (int j=graph.col_idx[i];j<ending;j++){
+			int k=graph.col_idx[graph.row_idx[j]];
+			while (graph.row_idx[k]<i && k<graph.row_idx.size()-1) k++; //checks if the path from j to i exists
+			if(graph.row_idx[k]==i){
+				if(graph.value[j]+graph.value[k]<0 || graph.value[j]==-std::numeric_limits<double>::infinity() || graph.value[k]==-std::numeric_limits<double>::infinity()){
 					info=true;
-					graph[i][i]=-std::numeric_limits<double>::infinity();
-					makeInf(graph,i);
+					k=graph.col_idx[i];
+					while (graph.row_idx[k]<i) k++;   //k now shows the index for the path from i to itself (the points which are 0 by default)
+					graph.value[k]=-std::numeric_limits<double>::infinity();
+					makeInfCSR(graph,i,k);
 				}
 			}
 		}

@@ -4,6 +4,7 @@
 #include <limits>
 #include "Bellman.h"
 #include <time.h>      
+#include <chrono>
 
 using namespace std;
 
@@ -76,11 +77,26 @@ vector <vector<double>> createGraph(int dimension){
 	return graph;
 }
 	
+double MeasureTime(CSR graph){  //Measures the time of a function in microseconds, 
+	auto start = chrono::high_resolution_clock::now();
+
+	AllCSR2(graph);  
+
+	auto stop = chrono::high_resolution_clock::now();
+
+    
+	double elapsed = chrono::duration_cast<chrono::microseconds>(stop-start).count();
+	return elapsed;
+}
+
+
+
+
 
 int main(){
 
 	//testing purposes
-	vector <vector<double>> graph; 
+	/*vector <vector<double>> graph; 
 	int V = 100;
 	for (int i=0; i <100; i++){
 		graph=createGraph(V);
@@ -89,6 +105,16 @@ int main(){
 		testmutate2(graph);
 		All(graph);
 		testpath(graph);
+	}*/
+
+	vector <vector<double>> graph;
+	double sum=0;
+	int dimension=10000;
+	for (int i=0; i<5;i++){
+		createGraph(dimension);
+		CSR matrix=createCSR(graph);
+		sum=sum+MeasureTime(matrix);
 	}
+	printf("%f",sum);
 	return 0;
 }

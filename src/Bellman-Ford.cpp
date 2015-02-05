@@ -21,12 +21,16 @@ using namespace std;
 //This void changes the paths from start to every other point, so that (if there exists a connection) in the end the shortest path from start to every connected point is shown.
 void newPaths(vector<vector<double>>& graph, int start){
 	int size=graph.size();
-	for (int i=0;i<size;i++){
-		if(graph[start][i]==graph[start][i]){    //Check if you need the path from i to other points. If start and i are not connected then ignore 
-			for (int j=0;j<size;j++){
-				if(graph[i][j]==graph[i][j]){										                 //
-					if(graph[start][j]>graph[i][j]+graph[start][i] || graph[start][j]!=graph[start][j]){  //together in one if? Don't know how to say (maybe if(graph[i][j]!=NULL && (graph[start][j]<graph[i][j] || graph[start][j]==NULL)) ?)
-						graph[start][j]=graph[i][j]+graph[start][i];
+	for (int next=0;next<size;next++){
+		if(graph[start][next]==graph[start][next]){    //Check if you need the path from i to other points. If start and i are not connected then ignore 
+			for (int end=0;end<size;end++){
+				if(graph[next][end]==graph[next][end]){										                 //
+					if(graph[start][end]>graph[next][end]+graph[start][next] || graph[start][end]!=graph[start][end]){  //together in one if? Don't know how to say (maybe if(graph[i][j]!=NULL && (graph[start][j]<graph[i][j] || graph[start][j]==NULL)) ?)
+						if (graph[start][end]!=graph[start][end] && end<next) {
+							graph[start][end]=graph[next][end]+graph[start][next];
+							next=end-1;														//if end was before next and the path from start to end didn't exist, we also have to check the paths from start over next
+							break;															//Note that this means extra work, because we will check next again, but in the worst case the work of the double-loop goes from O(n^2) to O(2*n^2)
+						}else graph[start][end]=graph[next][end]+graph[start][next];
 					}
 				}
 			}
@@ -43,7 +47,7 @@ void newGraph(vector<vector<double>>& graph){
 
 
 
-//if start has the value -INF, this function changes every successive point to -INF
+//if start has the value -INF, this function changes every successive point to -INF. This includes graph[start][start].
 void makeInf(vector<vector<double>>& graph,int start){
 	if (graph[start][start]!=-std::numeric_limits<double>::infinity()) return;
 	int size=graph.size();
@@ -57,13 +61,13 @@ void makeInf(vector<vector<double>>& graph,int start){
 //This Algo checks if there exists a negative cycle in the graph, by adding the path from a point i to a point j and then backwards.
 //In addition it changes (with makeInf() ) all related points to -INF)
 bool checkNeg(vector<vector<double>>& graph){
-	bool info=1;
+	bool info=false;
 	int size=graph.size();
 	for (int i=0;i<size;i++){
 		for (int j=0;j<size;j++){
 			if (graph[i][j]==graph[i][j] && graph[j][i]==graph[j][i]){
 				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==-std::numeric_limits<double>::infinity() || graph[i][j]==-std::numeric_limits<double>::infinity()){
-					info=0;
+					info=true;
 					graph[i][i]=-std::numeric_limits<double>::infinity();
 					makeInf(graph,i);
 				}
@@ -85,25 +89,6 @@ void Output(vector<vector<double>> graph){
 		printf("\n");
 	}
 	printf("\n\n\n");
-}
-
-//simply use all the functions together
-void All(vector<vector<double>>& graph){
-	Output(graph);
-	newGraph(graph);
-	Output(graph);
-	bool info=checkNeg(graph);
-	Output(graph);
-	test(graph);
-}
-
-//tests if all -INF's have -INF as successor
-void test(vector<vector<double>> graph){
-	for (int i=0;i<graph.size();i++){
-		for (int k=0;k<graph.size();k++){
-			if (graph[i][i]==-std::numeric_limits<double>::infinity()) assert(graph[i][k]==-std::numeric_limits<double>::infinity() || graph[i][k]!=graph[i][k]);
-		}
-	}
 }
 
 //changes a normal matrix into a CSR-Matrix
@@ -199,6 +184,10 @@ void newPathsCSR(CSR& graph, int start){
 				if(idx<next_point) ++next_point;	
 				graph.row_idx.insert(graph.row_idx.begin()+idx,end);
 				graph.value.insert(graph.value.begin()+idx,sum);
+				if (graph.row_idx[next_point]>end){						//see newPaths: if the new path is before next_point we have to check this also
+					next_point=idx-1;
+					break;
+				}
 			}
 		}
 	}
@@ -211,6 +200,39 @@ void newGraphCSR(CSR& graph){
 	int size=graph.col_idx.size();
 	for (int i=0;i<size;i++) newPathsCSR(graph,i);
 }
+
+//if start has the value -INF, this function changes every successive point to -INF
+void makeInfCSR(CSR& graph,int start){
+	if (graph[start][start]!=-std::numeric_limits<double>::infinity()) return;
+	int size=graph.size();
+	for (int j=0;j<size;j++){
+		if (graph[start][j]==graph[start][j]){
+			graph[start][j]=-std::numeric_limits<double>::infinity();
+		} 
+	}
+}
+
+//This Algo checks if there exists a negative cycle in the graph, by adding the path from a point i to a point j and then backwards. This includes graph[start][start].
+//In addition it changes (with makeInf() ) all related points to -INF)
+bool checkNeg(vector<vector<double>>& graph){
+	bool info=false;
+	int size=graph.size();
+	for (int i=0;i<size;i++){
+		for (int j=0;j<size;j++){
+			if (graph[i][j]==graph[i][j] && graph[j][i]==graph[j][i]){
+				if(graph[i][j]+graph[j][i]<0 || graph[j][i]==-std::numeric_limits<double>::infinity() || graph[i][j]==-std::numeric_limits<double>::infinity()){
+					info=true;
+					graph[i][i]=-std::numeric_limits<double>::infinity();
+					makeInf(graph,i);
+				}
+			}
+		}
+	}
+	return info;
+}
+
+
+
 
 
 /*int main(){

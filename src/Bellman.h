@@ -24,10 +24,6 @@ bool checkNeg(vector<vector<double>>&);
 
 void Output(vector<vector<double>>);
 
-void All(vector<vector<double>>&);
-
-void test(vector<vector<double>>);
-
 CSR createCSR(vector<vector<double>>);
 
 vector <vector<double>> createNormal(CSR);

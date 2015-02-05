@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <limits>
 #include "Bellman.h"
+#include <time.h>      
+
 using namespace std;
 
 
@@ -52,28 +54,41 @@ void testpath(vector <vector<double>> matrix){
 	}
 }
 
+vector <vector<double>> createGraph(int dimension){
+	srand (time(NULL));
+	int quote1=rand()%100;
+	int quote2=rand()%100;
+	
+	vector <vector<double>> graph; 
+	graph.resize(dimension,vector<double>(dimension,std::numeric_limits<double>::quiet_NaN()));
+	
+
+	for (int i=0;i<dimension;i++){
+		for (int k=0;k<dimension;k++){
+			if (k==i) graph[i][k]=0;
+			else if ((rand()%100)<=quote1) {
+				int r=rand()%100;
+				r=r-quote2;
+				graph[i][k]=r;
+			}
+		}
+	}
+	return graph;
+}
+	
 
 int main(){
 
 	//testing purposes
 	vector <vector<double>> graph; 
 	int V = 100;
-	graph.resize(V,vector<double>(V,std::numeric_limits<double>::quiet_NaN()));
-	for (int i=0;i<V;i++){
-		for (int k=0;k<V;k++){
-			if (k==i) graph[i][k]=0;
-			else if ((rand()%100)<=70) {
-				int r=rand()%100;
-				r=r-10;
-				graph[i][k]=r;
-			}
-		}
+	for (int i=0; i <100; i++){
+		graph=createGraph(V);
+		CSR matrix=createCSR(graph);
+		testmutate1(matrix);
+		testmutate2(graph);
+		All(graph);
+		testpath(graph);
 	}
-	CSR matrix=createCSR(graph);
-	testmutate1(matrix);
-	testmutate2(graph);
-	All(graph);
-	testpath(graph);
-
 	return 0;
 }

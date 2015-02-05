@@ -237,9 +237,15 @@ bool checkNegCSR(CSR& graph){
 	return info;
 }
 
+void All(vector <vector<double>>& graph){
+	newGraph(graph);
+	checkNeg(graph);
+}
 
-
-
+void AllCSR(CSR& graph){
+	newGraphCSR(graph);
+	checkNegCSR(graph);
+}
 
 /*int main(){
 

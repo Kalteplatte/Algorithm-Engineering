@@ -40,4 +40,8 @@ void makeInfCSR(CSR&,int,int);
 
 bool checkNegCSR(CSR&);
 
+void All(vector <vector<double>>&);
+
+void AllCSR(CSR&);
+
 #endif

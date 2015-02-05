@@ -36,6 +36,8 @@ void newGraphCSR(CSR&);
 
 void newGraphCSR(CSR&);
 
+void newGraphCSR2(CSR&);
+
 void makeInfCSR(CSR&,int,int);
 
 bool checkNegCSR(CSR&);
@@ -43,5 +45,8 @@ bool checkNegCSR(CSR&);
 void All(vector <vector<double>>&);
 
 void AllCSR(CSR&);
+
+void AllCSR2(CSR&);
+
 
 #endif

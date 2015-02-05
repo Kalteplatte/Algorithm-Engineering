@@ -267,6 +267,11 @@ void AllCSR(CSR& graph){
 	checkNegCSR(graph);
 }
 
+void AllCSR2(CSR& graph){
+	newGraph2CSR(graph);
+	checkNegCSR(graph);
+}
+
 /*int main(){
 
 	return 0;

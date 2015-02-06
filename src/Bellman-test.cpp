@@ -10,11 +10,11 @@ using namespace std;
 
 
 
-//test if the mutation from CSR into matrix and backwards works correctly
-void testmutate1(CSR graph){
+//test if the mutation from CRS into matrix and backwards works correctly
+void testmutate1(CRS graph){
 	vector <vector<double>> matrix;
 	matrix=createNormal(graph);
-	CSR graph2=createCSR(matrix);
+	CRS graph2=createCRS(matrix);
 	assert(graph.value.size()==graph2.value.size());
 	assert(graph.col_idx.size()==graph2.col_idx.size());
 	assert(graph.row_idx.size()==graph2.row_idx.size());
@@ -28,9 +28,9 @@ void testmutate1(CSR graph){
 
 }
 
-//test if the mutation from matrix into CSR and backwards works correctly
+//test if the mutation from matrix into CRS and backwards works correctly
 void testmutate2(vector <vector<double>> matrix){
-	CSR graph=createCSR(matrix);
+	CRS graph=createCRS(matrix);
 	vector <vector<double>> matrix2;
 	matrix2=createNormal(graph);
 	
@@ -45,6 +45,7 @@ void testmutate2(vector <vector<double>> matrix){
 	}
 }
 
+//test if the given paths from i to j are smaller or equal to other paths from i to j over other points
 void testpath(vector <vector<double>> matrix){
 	unsigned long size=matrix.size();
 	for (unsigned long i=0;i<size;i++){
@@ -55,6 +56,7 @@ void testpath(vector <vector<double>> matrix){
 	}
 }
 
+//create a random graph in the given dimension
 vector <vector<double>> createGraph(unsigned long dimension){
 	//srand (time(NULL));
 	int quote1=rand()%100;
@@ -76,7 +78,9 @@ vector <vector<double>> createGraph(unsigned long dimension){
 	}
 	return graph;
 }
-	
+
+
+//Measures the time AllOpt needs for using Bellman-Ford on a graph
 double MeasureTime(vector <vector<double>> graph){  //Measures the time of a function in microseconds, 
 	auto start = chrono::high_resolution_clock::now();
 
@@ -100,7 +104,7 @@ int main(){
 	unsigned long V = 100;
 	for (unsigned long i=0; i <100; i++){
 		graph=createGraph(V);
-		CSR matrix=createCSR(graph);
+		CRS matrix=createCRS(graph);
 		testmutate1(matrix);
 		testmutate2(graph);
 		All(graph);

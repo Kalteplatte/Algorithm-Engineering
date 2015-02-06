@@ -8,7 +8,7 @@
 using namespace std;
 
 
-struct CSR{
+struct CRS{
 	vector<double> value;
 	vector<unsigned long> row_idx;
 	vector<unsigned long> col_idx;
@@ -24,29 +24,29 @@ bool checkNeg(vector<vector<double>>&);
 
 void Output(vector<vector<double>>);
 
-CSR createCSR(vector<vector<double>>);
+CRS createCRS(vector<vector<double>>);
 
-vector <vector<double>> createNormal(CSR);
+vector <vector<double>> createNormal(CRS);
 
-void OutputCSR(CSR);
+void OutputCRS(CRS);
 
-void newPathsCSR(CSR&,unsigned long);
+void newPathsCRS(CRS&,unsigned long);
 
-void newGraphCSR(CSR&);
+void newGraphCRS(CRS&);
 
-void newGraphCSR(CSR&);
+void newGraphCRS(CRS&);
 
-void newGraphCSR2(CSR&);
+void newGraphCRS2(CRS&);
 
-void makeInfCSR(CSR&,unsigned long,unsigned long);
+void makeInfCRS(CRS&,unsigned long,unsigned long);
 
-bool checkNegCSR(CSR&);
+bool checkNegCRS(CRS&);
 
 void All(vector <vector<double>>&);
 
-void AllCSR(CSR&);
+void AllCRS(CRS&);
 
-void AllCSR2(CSR&);
+void AllCRS2(CRS&);
 
 void AllOpt(vector <vector<double>>&);
 

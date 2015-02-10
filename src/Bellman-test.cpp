@@ -84,7 +84,7 @@ vector <vector<double>> createGraph(unsigned long dimension){
 double MeasureTime(vector <vector<double>> graph){  //Measures the time of a function in microseconds, 
 	auto start = chrono::high_resolution_clock::now();
 
-	AllOpt(graph);  
+	/*for(int i=0;i<1000;i++)*/ All(graph);  
 
 	auto stop = chrono::high_resolution_clock::now();
 
@@ -113,7 +113,7 @@ int main(){
 
 	vector <vector<double>> graph;
 	double sum=0;
-	unsigned long dimension=1000;
+	unsigned long dimension=10;
 	for (unsigned long i=0; i<5;i++){
 		graph=createGraph(dimension);
 		sum=sum+MeasureTime(graph);
